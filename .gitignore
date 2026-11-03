@@ -22,6 +22,7 @@ ffmpeg/
 *.live_chat.json
 !docs/*.png
 !assets/*.png
+!browser-extension/icons/*.png
 !examples/*.live_chat.json
 
 # standalone .exe build (python build_exe.py)
