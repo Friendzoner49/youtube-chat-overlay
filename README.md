@@ -6,6 +6,8 @@
 
 Turn the live-chat replay of a YouTube stream into a **transparent video of the chat box**, perfectly synced with the stream, so you can stack it on top of your footage in DaVinci Resolve, Premiere Pro, Final Cut, CapCut and other editors.
 
+<br clear="right">
+
 ![Chat styles](docs/styles.png)
 
 ## Download
@@ -101,7 +103,7 @@ The result is `dist/ChatOverlay.app`. FFmpeg (`brew install ffmpeg`) is still ne
 
    Downloading does the same as `yt-dlp --write-subs --sub-langs live_chat --skip-download URL`. Use **Chat download folder** to choose where the file is saved; the app remembers it for next time. If you leave it blank, the chat is saved next to the selected video, or in your Downloads folder.
 
-   **Age-restricted or members-only videos** need YouTube login cookies. The app tries to read them straight from a running Chrome install first (best-effort — Chrome's cookie database is often locked while Chrome is open, in which case the app logs a warning and falls back automatically). The reliable method is a manually exported `cookies.txt`: install a "cookies.txt" export extension for your browser (e.g. *Get cookies.txt LOCALLY*), export your youtube.com cookies while logged in, and drop the file as `cookies.txt` in the chat download folder, the work folder, or next to the app/script. It is picked up automatically and takes priority over Chrome.
+   **Age-restricted or members-only videos** need YouTube login cookies. Pick your browser next to **Get cookies** and press it — the app reads your login cookies directly (no extension needed) and saves them as `cookies.txt` in the chat download folder, where it's picked up automatically on every future download. **Close the browser completely first**: its cookie database is normally locked while it's running, so the button (and the automatic read the app also tries before each download) fails with a "could not copy cookie database" message until you do. If you'd rather not close your browser, a "cookies.txt" export extension (e.g. *Get cookies.txt LOCALLY*) works the same way and writes the same file format — drop its output as `cookies.txt` in the chat download folder, the work folder, or next to the app/script.
 2. **(Recommended) Pick the source video.** The app only reads its size, frame rate and length; it does not re-encode it unless you choose *Burn into the source video*. If you don't pick one, fill in *Frame size* and *FPS* yourself, otherwise 1920×1080 at 30 fps is used.
 3. **Choose output, style, position**, and optionally a *Start*/*End* time to render only part of the stream.
 4. Press **Preview image** to check the look at a given time, then **Export video**.

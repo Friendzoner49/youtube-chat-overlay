@@ -6,6 +6,8 @@
 
 Biến phần live chat (chat replay) của một buổi livestream YouTube thành **video khung chat nền trong suốt**, khớp đúng thời gian với buổi live, để đặt chồng lên video trong DaVinci Resolve, Premiere Pro, Final Cut, CapCut…
 
+<br clear="right">
+
 ![Các kiểu khung chat](docs/styles.png)
 
 ## Tải về
@@ -101,7 +103,7 @@ Kết quả nằm ở `dist/ChatOverlay.app`. Vẫn cần FFmpeg (`brew install 
 
    Tải chat tương đương lệnh `yt-dlp --write-subs --sub-langs live_chat --skip-download URL`. Dùng ô **Thư mục lưu chat tải về** để chọn nơi lưu; app ghi nhớ thư mục này cho các lần mở sau. Nếu để trống, file được lưu cạnh video gốc đã chọn, hoặc trong thư mục Downloads.
 
-   **Video giới hạn tuổi hoặc dành riêng cho hội viên** cần cookies đăng nhập YouTube. App thử đọc cookies trực tiếp từ Chrome đang cài trên máy trước (best-effort — file cookie của Chrome thường bị khoá khi Chrome đang mở, lúc đó app sẽ báo cảnh báo rồi tự chuyển sang cách khác). Cách đáng tin cậy hơn là xuất thủ công file `cookies.txt`: cài tiện ích xuất "cookies.txt" cho trình duyệt (ví dụ *Get cookies.txt LOCALLY*), xuất cookie của youtube.com khi đang đăng nhập, rồi đặt file đó tên `cookies.txt` vào thư mục lưu chat, thư mục làm việc, hoặc cạnh app/script. App sẽ tự nhận và ưu tiên dùng file này trước Chrome.
+   **Video giới hạn tuổi hoặc dành riêng cho hội viên** cần cookies đăng nhập YouTube. Chọn trình duyệt ở ô cạnh nút **Lấy cookies** rồi bấm — app đọc thẳng cookies đăng nhập của bạn (không cần cài tiện ích gì) và lưu thành `cookies.txt` trong thư mục lưu chat, từ đó app sẽ tự dùng cho mọi lần tải sau. **Phải đóng hẳn trình duyệt trước khi bấm**: file cookie của trình duyệt thường bị khoá khi đang mở, nên nút này (và cả bước tự đọc cookies app vẫn thử trước mỗi lần tải chat) sẽ báo lỗi "could not copy cookie database" cho tới khi bạn đóng. Nếu không muốn đóng trình duyệt, tiện ích xuất "cookies.txt" (ví dụ *Get cookies.txt LOCALLY*) cũng cho ra đúng định dạng file này — đặt file xuất ra tên `cookies.txt` vào thư mục lưu chat, thư mục làm việc, hoặc cạnh app/script.
 2. **(Nên làm) Chọn video gốc.** App chỉ đọc kích thước, FPS và độ dài, không mã hoá lại video, trừ khi bạn chọn *Ghép thẳng vào video gốc*. Nếu không chọn video, hãy điền *Khung hình* và *FPS*; để trống thì mặc định 1920×1080, 30 fps.
 3. **Chọn kiểu xuất, giao diện, vị trí**, và nhập *Bắt đầu*/*Kết thúc* nếu chỉ cần một đoạn.
 4. Bấm **Xem thử ảnh** để kiểm tra, rồi **Xuất video**.

@@ -150,6 +150,13 @@ STRINGS = {
                        "   ⚠ Could not read cookies from Chrome ({e}) – Chrome may be running and locking the "
                        "cookie file. Close Chrome completely (including background processes) and retry if the "
                        "video requires login. Retrying without cookies…"),
+    "ck_start": ("Đang đọc cookies từ {b}… (hãy đóng hẳn trình duyệt nếu bị lỗi)",
+                 "Reading cookies from {b}… (close the browser completely if this fails)"),
+    "ck_none": ("Không tìm thấy cookie nào của youtube.com/google.com trong {b}. Hãy đăng nhập YouTube trong "
+                "trình duyệt đó rồi thử lại.",
+                "No youtube.com/google.com cookies found in {b}. Log in to YouTube in that browser and try again."),
+    "ck_done": ("Đã lưu {n} cookie vào: {p}", "Saved {n} cookies to: {p}"),
+    "ck_fail": ("Lấy cookies thất bại: {e}", "Failed to read cookies: {e}"),
     "dl_net": ("Mất kết nối tới YouTube nhiều lần liên tiếp nên không tải tiếp được ({e}).\n"
                "Hãy kiểm tra mạng, tắt thử VPN / tính năng quét HTTPS của phần mềm diệt virus, rồi bấm Tải chat lại.",
                "The connection to YouTube kept dropping, so the download could not continue ({e}).\n"
@@ -181,6 +188,9 @@ STRINGS = {
                 "Cannot use the work folder: {p}\n({e})\nCheck that the drive is connected and has space, or pick another folder."),
     "cache_moved": ("   Đã chuyển cache ảnh cũ sang: {p}", "   Moved the old image cache to: {p}"),
     "g_browse": ("Chọn…", "Browse…"),
+    "g_browser": ("Trình duyệt", "Browser"),
+    "g_ck_btn": ("Lấy cookies", "Get cookies"),
+    "g_ck_ok": ("Đã lưu cookies vào: {p}", "Cookies saved to: {p}"),
     "g_fmt": ("Kiểu xuất", "Output"),
     "g_style": ("Giao diện chat", "Chat style"),
     "g_pos": ("Vị trí khung chat", "Chat position"),
@@ -303,6 +313,10 @@ def save_settings(d):
 
 
 def default_work_dir():
+    if FROZEN and sys.platform == "darwin":
+        # .app không nên bị ghi vào; dùng thư mục dữ liệu ứng dụng chuẩn của macOS.
+        # Don't write inside the .app bundle; use the standard macOS app-data folder.
+        return os.path.join(os.path.expanduser("~/Library/Application Support/ChatOverlay"), "work")
     return os.path.join(SCRIPT_DIR, "work")
 
 
@@ -1330,7 +1344,17 @@ def find_tool(name, explicit=""):
     for p in (os.path.join(SCRIPT_DIR, exe), os.path.join(SCRIPT_DIR, "ffmpeg", "bin", exe)):
         if os.path.isfile(p):
             return p
-    return shutil.which(name)
+    found = shutil.which(name)
+    if found:
+        return found
+    if sys.platform == "darwin":
+        # App launched từ Finder không kế thừa PATH của shell (thiếu Homebrew).
+        # An app launched from Finder doesn't inherit the shell's PATH (missing Homebrew).
+        for d in ("/opt/homebrew/bin", "/usr/local/bin"):
+            p = os.path.join(d, name)
+            if os.path.isfile(p):
+                return p
+    return None
 
 
 def _popen_kw():
@@ -1470,6 +1494,29 @@ class _YdlLogger:
 
     def error(self, msg):
         self.errors.append(_strip_ansi(msg))
+
+
+BROWSERS = ["chrome", "edge", "firefox", "brave", "vivaldi", "opera", "safari", "chromium"]
+
+
+def export_cookies_from_browser(browser, dest_path, log=print):
+    """Đọc cookie của trình duyệt (yt-dlp) và ghi ra file cookies.txt (định dạng Netscape).
+    Đóng hẳn trình duyệt trước khi gọi hàm này nếu trình duyệt đang khoá file cookie.
+    Reads the browser's cookies via yt-dlp and writes them to a Netscape-format cookies.txt.
+    Close the browser first if it's holding an exclusive lock on its cookie database."""
+    try:
+        from yt_dlp.cookies import extract_cookies_from_browser
+    except ImportError:
+        raise RuntimeError(T("dl_noytdlp"))
+    log(T("ck_start", b=browser))
+    jar = extract_cookies_from_browser(browser)
+    n_youtube = sum(1 for c in jar if "youtube.com" in (c.domain or "") or "google.com" in (c.domain or ""))
+    if n_youtube == 0:
+        raise RuntimeError(T("ck_none", b=browser))
+    os.makedirs(os.path.dirname(os.path.abspath(dest_path)), exist_ok=True)
+    jar.save(dest_path, ignore_discard=True, ignore_expires=True)
+    log(T("ck_done", n=n_youtube, p=dest_path))
+    return dest_path
 
 
 def _find_cookies_file(out_dir, work_dir):
@@ -2414,12 +2461,14 @@ def launch_gui():
     v_canvas = tk.BooleanVar(value=bool(st.get("box_only", True)))
     v_share = tk.BooleanVar(value=bool(st.get("share_frames", True)))
     v_prev = SV(st.get("preview_at", "5:00"))
+    v_browser = SV(st.get("cookie_browser", "chrome"))
     status = SV("")
 
     def save():
         d = {"lang": LANG, "work_dir": paths["work"].get().strip(), "download_dir": paths["dldir"].get().strip(),
              "avatars": v_av.get(),
-             "box_only": v_canvas.get(), "share_frames": v_share.get(), "preview_at": v_prev.get()}
+             "box_only": v_canvas.get(), "share_frames": v_share.get(), "preview_at": v_prev.get(),
+             "cookie_browser": v_browser.get()}
         d.update(codes)
         for k, _, _, _, keep in NUM_FIELDS:
             if keep:
@@ -2493,6 +2542,12 @@ def launch_gui():
         ttk.Entry(frm, textvariable=paths["url"]).grid(row=r, column=1, sticky="ew", **P)
         b_dl = ttk.Button(frm, text=T("g_dl"), command=start_download)
         b_dl.grid(row=r, column=2, sticky="ew", **P)
+        r += 1
+        ttk.Label(frm, text=T("g_browser")).grid(row=r, column=0, sticky="w", **P)
+        ttk.Combobox(frm, textvariable=v_browser, values=BROWSERS, state="readonly", width=10).grid(
+            row=r, column=1, sticky="w", **P)
+        b_ck = ttk.Button(frm, text=T("g_ck_btn"), command=start_export_cookies)
+        b_ck.grid(row=r, column=2, sticky="ew", **P)
         r += 1
         file_row(T("g_dldir"), "dldir", "dir")
         file_row(T("g_chat"), "chat", "chat")
@@ -2657,6 +2712,25 @@ def launch_gui():
                 q.put(("err", str(e)))
         threading.Thread(target=work, daemon=True).start()
 
+    def start_export_cookies():
+        browser = v_browser.get().strip() or "chrome"
+        dest_dir = (os.path.expanduser(paths["dldir"].get().strip()) or
+                    os.path.expanduser(paths["work"].get().strip()) or default_download_dir())
+        dest = os.path.join(dest_dir, "cookies.txt")
+        save()
+        begin()
+        W["pb"].config(mode="indeterminate")
+        W["pb"].start(15)
+
+        def work():
+            try:
+                p = export_cookies_from_browser(browser, dest, log=lambda s: q.put(("log", s)))
+                q.put(("cookies_ready", p))
+            except Exception as e:
+                q.put(("log", traceback.format_exc()))
+                q.put(("err", T("ck_fail", e=str(e))))
+        threading.Thread(target=work, daemon=True).start()
+
     def finish():
         set_busy(False)
         pb = W["pb"]
@@ -2681,6 +2755,9 @@ def launch_gui():
                     finish()
                     paths["chat"].set(it[1])
                     status.set(T("g_chat_ok", p=os.path.basename(it[1])))
+                elif kind == "cookies_ready":
+                    finish()
+                    status.set(T("g_ck_ok", p=it[1]))
                 elif kind == "done":
                     finish()
                     W["pb"]["value"] = 1000
