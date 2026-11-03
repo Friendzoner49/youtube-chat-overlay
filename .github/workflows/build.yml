@@ -1,0 +1,67 @@
+name: Build
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch: {}
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt pyinstaller
+      - run: python build_exe.py
+      - name: Zip
+        shell: pwsh
+        run: Compress-Archive -Path ChatOverlay -DestinationPath ChatOverlay-windows.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ChatOverlay-windows
+          path: ChatOverlay-windows.zip
+
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: brew install ffmpeg
+      - run: python -c "import tkinter; tkinter.Tcl()"
+      - run: pip install -r requirements.txt pyinstaller
+      - name: Build .app
+        run: |
+          pyinstaller --noconfirm --clean --windowed --name ChatOverlay \
+            --icon assets/icon.png \
+            --add-data "assets:assets" \
+            chat_overlay.py
+      - name: Smoke test
+        run: dist/ChatOverlay.app/Contents/MacOS/ChatOverlay --help
+      - name: Zip (keeps symlinks/exec bits)
+        run: ditto -c -k --keepParent dist/ChatOverlay.app ChatOverlay-macos.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ChatOverlay-macos
+          path: ChatOverlay-macos.zip
+
+  release:
+    needs: [windows, macos]
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/ChatOverlay-windows/ChatOverlay-windows.zip
+            artifacts/ChatOverlay-macos/ChatOverlay-macos.zip
+          generate_release_notes: true

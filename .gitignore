@@ -1,0 +1,30 @@
+__pycache__/
+*.pyc
+
+# local settings & work folder (temp frames, caches)
+settings.json
+work/
+chat_cache/
+cookies.txt
+
+# user-supplied binaries / fonts
+fonts/
+ffmpeg.exe
+ffprobe.exe
+ffmpeg/
+
+# rendered outputs & downloaded chats
+*.mov
+*.mp4
+*.mkv
+*.webm
+*.png
+*.live_chat.json
+!docs/*.png
+!assets/*.png
+!examples/*.live_chat.json
+
+# standalone .exe build (python build_exe.py)
+ChatOverlay/
+build/
+*.spec
