@@ -1,10 +1,14 @@
 {
   "manifest_version": 3,
   "name": "ChatOverlay Cookie Export",
-  "version": "1.0",
-  "description": "Exports your YouTube/Google login cookies as cookies.txt for YouTube Live Chat Overlay, without closing the browser.",
-  "permissions": ["cookies", "downloads"],
-  "host_permissions": ["*://*.youtube.com/*", "*://*.google.com/*"],
+  "version": "1.1",
+  "description": "Exports your YouTube login cookies as cookies.txt for YouTube Live Chat Overlay. Links directly to the app so its \"Get cookies\" button works without closing the browser.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsD7GHKhOiSxdGYCKHuS+b4UyXIps/jPxnsnFGgzjQMB6KmkdMN3NIpt7Mod4PVBAhdFVn57blUZ2s9+EV9dFp5pZ0H7h6MNxaep988srKjG1pu00TpdCHWdBOAxyg50u+U+OEtzBosI2b0iormx0fnzxpbbo8PGkH8wX4OJbVVBa1CJRMuxCOfUpaYS7PNudVwq/TX80pmABh3mnOXycdIb+l5yGZJt75m5A/iFt+tPM2NPhtR5Q1pMVrR/nagJwmVoXsJxYTAV+TBBkBrVODyVzXIBA484hqxPANa+zu8wKYhUVqcRZuBQYt4hjuuVBXtwL9cvBeQONYuOvm7eAmwIDAQAB",
+  "permissions": ["cookies", "downloads", "nativeMessaging", "alarms"],
+  "host_permissions": ["*://*.youtube.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
   "action": {
     "default_popup": "popup.html",
     "default_title": "Export cookies.txt (ChatOverlay)"

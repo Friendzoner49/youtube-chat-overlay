@@ -156,6 +156,8 @@ STRINGS = {
                 "trình duyệt đó rồi thử lại.",
                 "No youtube.com/google.com cookies found in {b}. Log in to YouTube in that browser and try again."),
     "ck_done": ("Đã lưu {n} cookie vào: {p}", "Saved {n} cookies to: {p}"),
+    "ck_ext_done": ("Đã lấy {n} cookie qua tiện ích mở rộng (không cần đóng trình duyệt), lưu vào: {p}",
+                    "Got {n} cookies via the browser extension (no need to close the browser), saved to: {p}"),
     "ck_fail": ("Lấy cookies thất bại: {e}", "Failed to read cookies: {e}"),
     "dl_net": ("Mất kết nối tới YouTube nhiều lần liên tiếp nên không tải tiếp được ({e}).\n"
                "Hãy kiểm tra mạng, tắt thử VPN / tính năng quét HTTPS của phần mềm diệt virus, rồi bấm Tải chat lại.",
@@ -1505,18 +1507,247 @@ def export_cookies_from_browser(browser, dest_path, log=print):
     Reads the browser's cookies via yt-dlp and writes them to a Netscape-format cookies.txt.
     Close the browser first if it's holding an exclusive lock on its cookie database."""
     try:
-        from yt_dlp.cookies import extract_cookies_from_browser
+        from yt_dlp.cookies import extract_cookies_from_browser, YoutubeDLCookieJar
     except ImportError:
         raise RuntimeError(T("dl_noytdlp"))
     log(T("ck_start", b=browser))
     jar = extract_cookies_from_browser(browser)
-    n_youtube = sum(1 for c in jar if "youtube.com" in (c.domain or "") or "google.com" in (c.domain or ""))
-    if n_youtube == 0:
+    # Chỉ giữ cookie của youtube.com: file nằm trên đĩa dạng chữ thường nên càng ít phiên đăng nhập
+    # trong đó càng tốt. Only keep youtube.com cookies: the file sits on disk in plain text, so the
+    # smaller the login session stored in it, the better.
+    kept = YoutubeDLCookieJar()
+    for c in jar:
+        if "youtube.com" in (c.domain or ""):
+            kept.set_cookie(c)
+    if len(kept) == 0:
         raise RuntimeError(T("ck_none", b=browser))
     os.makedirs(os.path.dirname(os.path.abspath(dest_path)), exist_ok=True)
-    jar.save(dest_path, ignore_discard=True, ignore_expires=True)
-    log(T("ck_done", n=n_youtube, p=dest_path))
+    kept.save(dest_path, ignore_discard=True, ignore_expires=True)
+    log(T("ck_done", n=len(kept), p=dest_path))
     return dest_path
+
+
+# ---- Kết nối trực tiếp với tiện ích mở rộng trình duyệt (native messaging), chỉ Windows ----
+# Direct link to the browser extension (native messaging), Windows only.
+#
+# Chrome tự khởi chạy app này làm "native host" khi tiện ích gọi connectNative(): tiến trình
+# con đó mở một cổng TCP cục bộ (127.0.0.1, cổng ngẫu nhiên) và ghi {port, token} vào relay.json.
+# App (cửa sổ chính) chỉ đóng vai client: đọc relay.json rồi kết nối khi người dùng bấm "Lấy cookies".
+# Nhờ vậy không có tiến trình nào tự khởi động lặp lại khi trình duyệt chưa mở tiện ích.
+#
+# Chrome launches this app as the "native host" when the extension calls connectNative(): that
+# child process opens a local TCP port (127.0.0.1, random port) and writes {port, token} to
+# relay.json. The main app window is only ever a client: it reads relay.json and connects when the
+# user presses "Get cookies". Nothing respawns on its own while the extension isn't connected.
+
+NATIVE_HOST_NAME = "com.chatoverlay.native_host"
+EXTENSION_ID = "kmmooalecgnnejbbmniogbljiikjcnoh"
+
+
+def _native_app_data_dir():
+    base = os.environ.get("LOCALAPPDATA") or os.path.expanduser("~")
+    return os.path.join(base, "ChatOverlay")
+
+
+def _relay_info_path():
+    return os.path.join(_native_app_data_dir(), "relay.json")
+
+
+def _native_host_manifest_path():
+    return os.path.join(_native_app_data_dir(), "native_host.json")
+
+
+def register_native_host():
+    """Đăng ký native messaging host cho Chrome/Edge trong registry (chỉ Windows, bỏ qua lặng lẽ
+    nếu lỗi). Gọi mỗi lần mở GUI để tự sửa nếu người dùng di chuyển thư mục app.
+    Registers the native messaging host for Chrome/Edge in the registry (Windows only, fails
+    silently). Called on every GUI start so it self-heals if the app folder moves."""
+    if os.name != "nt":
+        return
+    try:
+        import winreg
+        if FROZEN:
+            exe = sys.executable
+        else:
+            # Chrome chỉ gọi thẳng 1 executable (không qua "python x.py"), nên cần 1 file .bat chuyển tiếp.
+            # Chrome can only exec a single executable (no "python x.py"), so forward through a .bat.
+            pyw = os.path.join(os.path.dirname(sys.executable), "pythonw.exe")
+            if not os.path.isfile(pyw):
+                pyw = sys.executable
+            exe = os.path.join(_native_app_data_dir(), "native_host.bat")
+            os.makedirs(os.path.dirname(exe), exist_ok=True)
+            with open(exe, "w", encoding="utf-8") as f:
+                f.write('@echo off\r\n"%s" "%s" %%*\r\n' % (pyw, os.path.abspath(__file__)))
+        manifest = {"name": NATIVE_HOST_NAME, "description": "ChatOverlay native messaging host (cookie export)",
+                    "path": exe, "type": "stdio", "allowed_origins": [f"chrome-extension://{EXTENSION_ID}/"]}
+        mpath = _native_host_manifest_path()
+        os.makedirs(os.path.dirname(mpath), exist_ok=True)
+        with open(mpath, "w", encoding="utf-8") as f:
+            json.dump(manifest, f, indent=2)
+        for browser_key in (r"Software\Google\Chrome\NativeMessagingHosts",
+                            r"Software\Microsoft\Edge\NativeMessagingHosts"):
+            try:
+                key = winreg.CreateKey(winreg.HKEY_CURRENT_USER, browser_key + "\\" + NATIVE_HOST_NAME)
+                winreg.SetValue(key, "", winreg.REG_SZ, mpath)
+                winreg.CloseKey(key)
+            except OSError:
+                pass
+    except Exception:
+        pass
+
+
+def run_native_host():
+    """Chạy ở chế độ "native host": Chrome khởi chạy tiến trình này với stdin/stdout nối vào tiện
+    ích (giao thức length-prefixed JSON). Mở cổng TCP cục bộ, chuyển tiếp yêu cầu "export" từ app
+    chính sang tiện ích rồi trả kết quả về. Runs in "native host" mode: Chrome launches this
+    process with stdin/stdout wired to the extension (length-prefixed JSON protocol). Opens a local
+    TCP port, relays "export" requests from the main app to the extension and returns the result."""
+    import socket
+    import struct
+    import secrets
+    import time as _time
+
+    stdin, stdout = sys.stdin.buffer, sys.stdout.buffer
+    io_lock = threading.Lock()
+
+    def read_msg():
+        raw_len = stdin.read(4)
+        if len(raw_len) < 4:
+            return None
+        n = struct.unpack("<I", raw_len)[0]
+        data = b""
+        while len(data) < n:
+            chunk = stdin.read(n - len(data))
+            if not chunk:
+                return None
+            data += chunk
+        return json.loads(data.decode("utf-8"))
+
+    def write_msg(obj):
+        data = json.dumps(obj).encode("utf-8")
+        stdout.write(struct.pack("<I", len(data)))
+        stdout.write(data)
+        stdout.flush()
+
+    def exchange(obj):
+        with io_lock:
+            write_msg(obj)
+            return read_msg()
+
+    token = secrets.token_hex(16)
+    srv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    srv.bind(("127.0.0.1", 0))
+    srv.listen(4)
+    port = srv.getsockname()[1]
+    relay_path = _relay_info_path()
+    try:
+        os.makedirs(os.path.dirname(relay_path), exist_ok=True)
+        with open(relay_path, "w", encoding="utf-8") as f:
+            json.dump({"port": port, "token": token}, f)
+    except OSError:
+        pass
+
+    stop = threading.Event()
+
+    def handle_client(conn):
+        try:
+            conn.settimeout(15)
+            buf = b""
+            while b"\n" not in buf:
+                chunk = conn.recv(4096)
+                if not chunk:
+                    return
+                buf += chunk
+            req = json.loads(buf.split(b"\n", 1)[0].decode("utf-8"))
+            if req.get("token") != token or req.get("cmd") != "export":
+                conn.sendall((json.dumps({"ok": False, "error": "unauthorized"}) + "\n").encode("utf-8"))
+                return
+            reply = exchange({"cmd": "export"})
+            if reply is None:
+                stop.set()
+                reply = {"ok": False, "error": "extension disconnected"}
+            conn.sendall((json.dumps(reply) + "\n").encode("utf-8"))
+        except Exception as e:
+            try:
+                conn.sendall((json.dumps({"ok": False, "error": str(e)}) + "\n").encode("utf-8"))
+            except Exception:
+                pass
+        finally:
+            try:
+                conn.close()
+            except Exception:
+                pass
+
+    def accept_loop():
+        srv.settimeout(1.0)
+        while not stop.is_set():
+            try:
+                conn, _addr = srv.accept()
+            except socket.timeout:
+                continue
+            except OSError:
+                break
+            handle_client(conn)
+
+    def keepalive_loop():
+        while not stop.is_set():
+            _time.sleep(25)
+            if stop.is_set() or exchange({"cmd": "ping"}) is None:
+                stop.set()
+                break
+
+    threading.Thread(target=accept_loop, daemon=True).start()
+    threading.Thread(target=keepalive_loop, daemon=True).start()
+    try:
+        while not stop.is_set():
+            _time.sleep(0.5)
+    finally:
+        stop.set()
+        try:
+            srv.close()
+        except Exception:
+            pass
+        try:
+            os.remove(relay_path)
+        except OSError:
+            pass
+
+
+def try_extension_export(timeout=8):
+    """Thử lấy cookies qua tiện ích trình duyệt đang kết nối (không cần đóng trình duyệt).
+    Trả về (text, count), hoặc None nếu không có tiện ích đang kết nối / không phản hồi kịp.
+    Tries to get cookies via a currently-connected browser extension (no need to close the
+    browser). Returns (text, count), or None if nothing is connected / it didn't reply in time."""
+    import socket
+    try:
+        with open(_relay_info_path(), "r", encoding="utf-8") as f:
+            info = json.load(f)
+    except Exception:
+        return None
+    try:
+        with socket.create_connection(("127.0.0.1", info["port"]), timeout=timeout) as s:
+            s.sendall((json.dumps({"token": info["token"], "cmd": "export"}) + "\n").encode("utf-8"))
+            s.settimeout(timeout)
+            buf = b""
+            while b"\n" not in buf:
+                chunk = s.recv(65536)
+                if not chunk:
+                    break
+                buf += chunk
+            if not buf:
+                return None
+            reply = json.loads(buf.split(b"\n", 1)[0].decode("utf-8"))
+            if reply.get("ok") and reply.get("cookies"):
+                return reply["cookies"], reply.get("count", 0)
+            return None
+    except OSError:
+        # relay.json cũ còn sót lại (tiến trình host trước đó bị đóng đột ngột) -> dọn luôn.
+        # Stale relay.json left over from a host that was closed abruptly -> clean it up.
+        try:
+            os.remove(_relay_info_path())
+        except OSError:
+            pass
+        return None
 
 
 def _find_cookies_file(out_dir, work_dir):
@@ -2426,6 +2657,7 @@ def launch_gui():
 
     st = load_settings()
     set_lang(st.get("lang") or detect_lang())
+    register_native_host()   # tự đăng ký lại mỗi lần mở, tự sửa nếu đã di chuyển thư mục app
     if os.name == "nt":      # taskbar hiện logo của app thay vì logo Python / own taskbar icon instead of Python's
         try:
             import ctypes
@@ -2724,6 +2956,15 @@ def launch_gui():
 
         def work():
             try:
+                ext = try_extension_export()
+                if ext:
+                    text, n = ext
+                    os.makedirs(os.path.dirname(dest), exist_ok=True)
+                    with open(dest, "w", encoding="utf-8", newline="\n") as f:
+                        f.write(text)
+                    q.put(("log", T("ck_ext_done", n=n, p=dest)))
+                    q.put(("cookies_ready", dest))
+                    return
                 p = export_cookies_from_browser(browser, dest, log=lambda s: q.put(("log", s)))
                 q.put(("cookies_ready", p))
             except Exception as e:
@@ -2909,6 +3150,14 @@ def main(argv=None):
 
 
 if __name__ == "__main__":
+    # Chrome khởi chạy app ở chế độ native host bằng cách gọi thẳng "<path> chrome-extension://ID/ …":
+    # bắt trước MỌI thứ khác (freeze_support, thay stdout/stderr) vì chế độ này cần stdin/stdout nhị phân
+    # thật để nói chuyện với trình duyệt. Chrome launches the app in native-host mode by exec'ing
+    # "<path> chrome-extension://ID/ …" directly: catch this before anything else (freeze_support,
+    # swapping stdout/stderr), since this mode needs real binary stdin/stdout to talk to the browser.
+    if len(sys.argv) > 1 and sys.argv[1].startswith("chrome-extension://"):
+        run_native_host()
+        sys.exit(0)
     import multiprocessing
     multiprocessing.freeze_support()     # bản .exe: tiến trình con dựng khung hình không mở thêm cửa sổ app
     for _name in ("stdout", "stderr"):   # bản .exe không có console -> sys.stdout là None
