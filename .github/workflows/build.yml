@@ -37,6 +37,7 @@ jobs:
         run: |
           pyinstaller --noconfirm --clean --windowed --name ChatOverlay \
             --icon assets/icon.png \
+            --exclude-module PIL._avif \
             --add-data "assets:assets" \
             chat_overlay.py
       - name: Smoke test

@@ -25,7 +25,8 @@ NAME = "ChatOverlay"
 # Big libraries that may be installed but are not used by the app -> keep them out of the build.
 EXCLUDES = ["numpy", "scipy", "pandas", "matplotlib", "torch", "onnxruntime", "ctranslate2", "transformers",
             "huggingface_hub", "av", "imageio", "cv2", "PyQt5", "PyQt6", "PySide2", "PySide6", "IPython",
-            "jupyter", "notebook", "pytest"]
+            "jupyter", "notebook", "pytest",
+            "PIL._avif"]   # AVIF (7,8 MB) app không dùng: avatar/emoji là JPEG/PNG/WebP / AVIF unused (7.8 MB)
 
 
 def work_dir():
@@ -109,6 +110,8 @@ def main():
             f.write(kept)
     elif os.path.isfile(src):
         shutil.copy2(src, dst)
+    # Dữ liệu múi giờ của Tcl (~2 MB) app không dùng. / Tcl time-zone data (~2 MB) is unused by the app.
+    shutil.rmtree(os.path.join(dist, "_internal", "_tcl_data", "tzdata"), ignore_errors=True)
     set_folder_icon(dist)
     print("\nDONE / XONG:", os.path.join(dist, NAME + ".exe"))
 
