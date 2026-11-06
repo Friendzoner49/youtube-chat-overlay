@@ -112,6 +112,21 @@ Kết quả nằm ở `dist/ChatOverlay.app`. Vẫn cần FFmpeg (`brew install 
 
 Cài đặt (ngôn ngữ, thư mục lưu chat, thư mục làm việc, giao diện, định dạng, kích thước…) được ghi nhớ giữa các lần mở. File cài đặt là `settings.json` nằm cạnh `chat_overlay.py`, nên không ghi gì vào ổ hệ thống. Chỉ khi thư mục đó không ghi được, app mới dùng `%APPDATA%\ChatOverlay\` (Windows) hoặc `~/.config/ChatOverlay/`. Cài đặt của bản cũ trong `%APPDATA%` được tự chuyển sang rồi xoá.
 
+### Tab Tải video
+
+Tab **Tải video** tải chính buổi live về. Dán link, chọn thư mục và (nếu muốn) độ phân giải tối đa, rồi bấm **Tải video** — cần FFmpeg như phần còn lại của app.
+
+1. App đọc danh sách định dạng (cùng dữ liệu với `yt-dlp --list-formats`, hiện trong ô log).
+2. Nếu có **AV1**, app tải AV1 nét nhất (trong giới hạn bạn chọn) cùng tiếng AAC rồi ghép thành `.mp4`, giữ nguyên chất lượng. (Nếu YouTube có VP9 độ phân giải *cao hơn* AV1 thì dùng VP9 để không mất độ nét.)
+3. Nếu không có AV1, app tải **VP9** nét nhất rồi đổi bằng FFmpeg (`h264_nvenc`, preset p7, VBR 15 Mbit/s, AAC 320k) thành `<tên>_final.mp4` — DaVinci Resolve và Premiere đọc chắc chắn. Máy không có card NVIDIA thì tự đổi bằng CPU (`libx264`, chậm hơn nhiều). Tick *Xoá file VP9 gốc* nếu chỉ cần file `_final.mp4`.
+4. Nếu đang tải bị đứt (VPN, mạng), bấm nút lần nữa: phần đã tải được giữ lại và tải tiếp.
+
+Ô **Tải gì** cho phép chỉ lấy phần cần dùng: *Hình + tiếng* (mặc định), *Chỉ hình* hoặc *Chỉ tiếng*. *Chỉ tiếng* lưu đúng đường tiếng **m4a (AAC)** gốc, không đụng tới — DaVinci Resolve, Premiere… nạp thẳng được và không bị đổi mã, nên chất lượng giữ nguyên như YouTube lưu. (Video nào không có m4a thì lấy bản tiếng tốt nhất còn lại và ghi chú trong ô log.) *Chỉ hình* theo cùng quy tắc AV1 / VP9 ở trên; file có đuôi tên `_video` / `_audio` nên không đè lên file hình + tiếng đã tải.
+
+**Giữ yt-dlp luôn mới.** YouTube hay đổi nên app tự cập nhật được yt-dlp. Mỗi lần mở, nếu đã hơn **1 tháng** chưa kiểm tra, app xem trên GitHub có yt-dlp mới không và hỏi trước khi làm gì; nút **Kiểm tra cập nhật yt-dlp** dùng được bất cứ lúc nào. File yt-dlp chính thức được tải từ bản phát hành của yt-dlp trên GitHub, đối chiếu mã SHA-256 của chính bản đó, rồi lưu vào thư mục `yt-dlp-update` cạnh `settings.json` (mở lại app để dùng). Tab hiện phiên bản đang dùng (✔ = đang dùng bản đã cập nhật). Cách này giống nhau cho `.exe` Windows, `.app` macOS và chạy từ mã nguồn.
+
+Bản HDR được tránh khi có bản SDR (video chỉ có AV1 dạng HDR thì chọn VP9 SDR), còn bản có DRM hoặc chỉ dành cho Premium thì bị bỏ qua. Video giới hạn tuổi / dành cho hội viên dùng chung file `cookies.txt` với phần tải chat.
+
 ### Thư mục làm việc (file tạm + cache)
 
 Mọi thứ app ghi ra trong lúc xử lý đều nằm trong một **thư mục làm việc**:

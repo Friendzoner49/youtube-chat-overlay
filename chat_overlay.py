@@ -225,6 +225,73 @@ STRINGS = {
     "ph_frames": ("Đang dựng khung hình", "Rendering frames"),
     "ph_encode": ("Đang mã hoá video", "Encoding video"),
     "ph_chat": ("Đang tải chat… {mb:.1f} MB", "Downloading chat… {mb:.1f} MB"),
+    # ---- video download tab
+    "g_tab_chat": ("Khung chat", "Chat overlay"),
+    "g_tab_video": ("Tải video", "Download video"),
+    "gv_hint": ("Dán link YouTube rồi bấm một nút. Có AV1 thì tải AV1 nét nhất; không có thì tải VP9 nét nhất rồi đổi "
+                "sang H.264 (_final.mp4) để dùng trong DaVinci/Premiere. Chỉ lấy tiếng thì được file m4a gốc, không đổi mã.",
+                "Paste a YouTube link and press one button. If AV1 exists the sharpest AV1 is downloaded; otherwise the "
+                "sharpest VP9, converted to H.264 (_final.mp4) for DaVinci/Premiere. Audio only gives the original m4a, not re-encoded."),
+    "gv_go": ("▶ Tải video", "▶ Download video"),
+    "gv_dir": ("Thư mục lưu video (trống = Downloads)", "Video folder (blank = Downloads)"),
+    "gv_maxh": ("Độ phân giải tối đa", "Max resolution"),
+    "gv_del": ("Xoá file VP9 gốc sau khi đổi xong (giữ lại mỗi file _final.mp4)",
+               "Delete the VP9 source after converting (keep only the _final.mp4)"),
+    "gv_ready": ("Dán link YouTube rồi bấm Tải video.", "Paste a YouTube link, then press Download video."),
+    "gv_done": ("Hoàn tất: {p}", "Finished: {p}"),
+    "gv_open": ("Đã tải xong:\n{p}\n\nMở thư mục chứa file?", "Download finished:\n{p}\n\nOpen the containing folder?"),
+    "ph_vlist": ("Đang đọc danh sách định dạng", "Reading the format list"),
+    "ph_vdl": ("Đang tải video", "Downloading video"),
+    "ph_vmerge": ("Đang ghép hình và tiếng", "Merging video and audio"),
+    "vd_listing": ("Đang lấy danh sách định dạng (yt-dlp --list-formats)…", "Getting the format list (yt-dlp --list-formats)…"),
+    "vd_noformat": ("YouTube không trả về định dạng nào tải được (video riêng tư, giới hạn tuổi/hội viên, hoặc có bản quyền). "
+                    "Thử bấm 'Lấy cookies' rồi tải lại.",
+                    "YouTube returned no downloadable format (private, age-restricted/members-only or DRM). "
+                    "Try 'Get cookies' and download again."),
+    "vd_live": ("Video này đang phát trực tiếp – hãy đợi buổi live kết thúc rồi tải.",
+                "This video is live right now – wait until the stream ends, then download."),
+    "vd_av1_lower": ("   Có AV1 nhưng thấp hơn VP9 ({a} so với {v}) → chọn VP9 để giữ độ nét.",
+                     "   AV1 exists but is lower quality than VP9 ({a} vs {v}) → using VP9 to keep the sharpness."),
+    "vd_pick_av1": ("▶ Chọn AV1: {v} + tiếng {a} → ghép lại, giữ nguyên.", "▶ Picked AV1: {v} + audio {a} → merged, kept as is."),
+    "vd_pick_vp9": ("▶ Không có AV1 phù hợp, chọn VP9: {v} + tiếng {a} → sẽ đổi sang H.264.",
+                    "▶ No suitable AV1, picked VP9: {v} + audio {a} → will be converted to H.264."),
+    "vd_pick_h264": ("▶ Không có AV1/VP9, chọn H.264: {v} + tiếng {a} → ghép lại, không đổi mã.",
+                     "▶ No AV1/VP9, picked H.264: {v} + audio {a} → merged, not re-encoded."),
+    "vd_downloaded": ("Đã tải xong: {p} ({mb:.0f} MB)", "Downloaded: {p} ({mb:.0f} MB)"),
+    "vd_nofile": ("Tải xong nhưng không thấy file video.", "The download finished but the video file was not found."),
+    "vd_conv": ("Đổi sang H.264 bằng {e} → {p}", "Converting to H.264 with {e} → {p}"),
+    "vd_conv_cpu": ("  ! Máy không có card NVIDIA dùng được NVENC – đổi bằng CPU (chậm hơn nhiều).",
+                    "  ! No usable NVIDIA NVENC on this machine – converting on the CPU (much slower)."),
+    "vd_final": ("XONG ✔  {p}  ({mb:.0f} MB)", "DONE ✔  {p}  ({mb:.0f} MB)"),
+    "vd_src_deleted": ("   Đã xoá file gốc: {p}", "   Deleted the source file: {p}"),
+    "vd_net": ("Mất kết nối tới YouTube nên chưa tải xong ({e}).\nPhần đã tải được giữ lại: bấm Tải video lần nữa "
+               "để tải tiếp từ chỗ dừng (nếu dùng VPN, kiểm tra VPN trước).",
+               "The connection to YouTube dropped before the download finished ({e}).\nThe part already downloaded is kept: "
+               "press Download video again to continue where it stopped (if you use a VPN, check it first)."),
+    "upd_app": ("bấm 'Kiểm tra cập nhật yt-dlp' ở tab Tải video", "press 'Check for yt-dlp update' in the Download video tab"),
+    "gv_kind": ("Tải gì", "Download"),
+    "gv_ytver": ("yt-dlp đang dùng: {v}", "yt-dlp in use: {v}"),
+    "gv_upd": ("Kiểm tra cập nhật yt-dlp", "Check for yt-dlp update"),
+    "vd_pick_video": ("▶ Chỉ hình: {v} → {k}", "▶ Video only: {v} → {k}"),
+    "vd_keep": ("giữ nguyên, không đổi mã", "kept as is, not re-encoded"),
+    "vd_will_conv": ("sẽ đổi sang H.264 (_final.mp4)", "will be converted to H.264 (_final.mp4)"),
+    "vd_noaudio": ("(không tiếng)", "(no audio)"),
+    "vd_pick_audio": ("▶ Chỉ tiếng: {a} → giữ nguyên chất lượng gốc, không đổi mã.",
+                      "▶ Audio only: {a} → original quality, not re-encoded."),
+    "vd_audio_noaac": ("  ! Video này không có bản m4a (AAC) – lấy bản tiếng tốt nhất còn lại; phần mềm dựng có thể không đọc được.",
+                       "  ! This video has no m4a (AAC) track – using the best other audio; some editors may not read it."),
+    "yu_checking": ("Đang kiểm tra bản yt-dlp mới…", "Checking for a newer yt-dlp…"),
+    "yu_new": ("Có yt-dlp mới: {new} (đang dùng {cur}).\nYouTube hay thay đổi nên bản mới giúp tải ổn định hơn.\n\nCập nhật bây giờ?",
+               "A newer yt-dlp is available: {new} (you have {cur}).\nYouTube changes often, so a newer one keeps downloads working.\n\nUpdate now?"),
+    "yu_latest": ("yt-dlp {cur} đã là bản mới nhất.", "yt-dlp {cur} is already the latest."),
+    "yu_getting": ("Đang tải yt-dlp {v}…", "Downloading yt-dlp {v}…"),
+    "yu_done": ("Đã cập nhật yt-dlp lên {v}.\nHãy đóng và mở lại app để dùng bản mới.",
+                "yt-dlp updated to {v}.\nClose and reopen the app to use it."),
+    "yu_fail": ("Không cập nhật được yt-dlp: {e}\nKiểm tra mạng/VPN rồi thử lại.",
+                "Could not update yt-dlp: {e}\nCheck your network/VPN and try again."),
+    "yu_bad": ("File tải về bị hỏng hoặc không khớp mã kiểm tra.", "The downloaded file is damaged or does not match its checksum."),
+    "vd_fail": ("Tải video thất bại: {e}\n(Nếu YouTube vừa thay đổi, thử cập nhật: {upd})",
+                "Video download failed: {e}\n(If YouTube changed something, try updating: {upd})"),
 }
 
 
@@ -1965,6 +2032,383 @@ def _download_chat_cli(exe, url, tmpl, out_dir, log, progress, cancel, ycache, c
     return path
 
 
+# ----------------------------------------------------------------------------- yt-dlp update
+# Bản yt-dlp trong app/.exe đứng yên, nhưng YouTube đổi liên tục. App tải file yt-dlp (zipapp) chính thức từ GitHub vào
+# thư mục cạnh settings.json; lần mở sau nạp nó thay cho bản đóng gói. Tự kiểm tra mỗi 30 ngày + nút bấm tay.
+# The bundled yt-dlp is frozen but YouTube keeps changing. The app downloads the official yt-dlp zipapp from GitHub into a
+# folder next to settings.json and uses it instead of the bundled one on next launch. Auto-check every 30 days + a button.
+YTDLP_REPO = "yt-dlp/yt-dlp"
+UPDATE_DAYS = 30
+
+
+def ytdlp_update_dir():
+    return os.path.join(os.path.dirname(_settings_path()), "yt-dlp-update")
+
+
+def _vkey(v):
+    return tuple(int(x) for x in re.findall(r"\d+", str(v)))
+
+
+def _override_zip():
+    d = ytdlp_update_dir()
+    try:
+        names = [n for n in os.listdir(d) if re.fullmatch(r"yt-dlp-[\d.]+\.zip", n)]
+    except OSError:
+        return None, ""
+    if not names:
+        return None, ""
+    best = max(names, key=lambda n: _vkey(n[7:-4]))
+    return os.path.join(d, best), best[7:-4]
+
+
+class _YtdlpFinder:
+    def __init__(self, zi):
+        self.zi = zi
+
+    def find_spec(self, name, path=None, target=None):
+        if name == "yt_dlp" or name.startswith("yt_dlp."):
+            return self.zi.find_spec(name)
+        return None
+
+
+def install_ytdlp_override():
+    """Chạy lúc nạp module, trước mọi `import yt_dlp`. Trả về số phiên bản nếu đang dùng bản đã cập nhật."""
+    z, ver = _override_zip()
+    if not z or "yt_dlp" in sys.modules:
+        return ""
+    if not FROZEN:                       # chạy từ mã nguồn: bản pip mới hơn thì dùng pip / source run: prefer a newer pip copy
+        try:
+            import importlib.metadata as md
+            if _vkey(md.version("yt-dlp")) >= _vkey(ver):
+                return ""
+        except Exception:
+            pass
+    try:
+        import zipimport
+        sys.meta_path.insert(0, _YtdlpFinder(zipimport.zipimporter(z)))
+    except Exception:
+        return ""
+    return ver
+
+
+YTDLP_OVERRIDE = install_ytdlp_override()
+
+
+def _http_get(url, timeout=30):
+    req = urllib.request.Request(url, headers={"User-Agent": "ChatOverlay"})
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        return r.read()
+
+
+def ytdlp_current_version():
+    import yt_dlp.version
+    return yt_dlp.version.__version__
+
+
+def ytdlp_latest_version():
+    data = json.loads(_http_get(f"https://api.github.com/repos/{YTDLP_REPO}/releases/latest").decode("utf-8"))
+    return str(data["tag_name"])
+
+
+def ytdlp_download_update(tag):
+    """Tải yt-dlp `tag`, kiểm SHA-256 với file SHA2-256SUMS của cùng bản phát hành, rồi cất vào thư mục cập nhật."""
+    import hashlib
+    import zipfile
+    base = f"https://github.com/{YTDLP_REPO}/releases/download/{tag}/"
+    blob = _http_get(base + "yt-dlp", 180)
+    want = ""
+    for line in _http_get(base + "SHA2-256SUMS").decode("utf-8", "replace").splitlines():
+        parts = line.split()
+        if len(parts) >= 2 and parts[-1].lstrip("*") == "yt-dlp":
+            want = parts[0].lower()
+    if not want or hashlib.sha256(blob).hexdigest() != want:
+        raise RuntimeError(T("yu_bad"))
+    d = ytdlp_update_dir()
+    os.makedirs(d, exist_ok=True)
+    tmp = os.path.join(d, "download.tmp")
+    with open(tmp, "wb") as f:
+        f.write(blob)
+    try:
+        with zipfile.ZipFile(tmp) as z:
+            if "yt_dlp/version.py" not in z.namelist():
+                raise RuntimeError(T("yu_bad"))
+    except zipfile.BadZipFile:
+        raise RuntimeError(T("yu_bad"))
+    new = os.path.join(d, f"yt-dlp-{tag}.zip")
+    os.replace(tmp, new)
+    for n in os.listdir(d):                                  # chỉ giữ bản mới nhất / keep only the newest
+        if re.fullmatch(r"yt-dlp-[\d.]+\.zip", n) and os.path.join(d, n) != new:
+            try:
+                os.remove(os.path.join(d, n))
+            except OSError:
+                pass     # đang được nạp -> xoá lần sau / still in use -> next time
+    return new
+
+
+# ----------------------------------------------------------------------------- video download
+# Tab "Tải video": xem danh sách định dạng (như yt-dlp --list-formats) -> chọn AV1 nét nhất; không có AV1 thì VP9
+# nét nhất rồi đổi sang H.264 (NVENC) thành *_final.mp4 cho DaVinci/Premiere.
+# "Download video" tab: read the format list (like yt-dlp --list-formats) -> best AV1; no AV1 -> best VP9, then
+# convert to H.264 (NVENC) as *_final.mp4 for DaVinci/Premiere.
+# Thông số theo yêu cầu người dùng, giữ nguyên / the user's own parameters, kept verbatim:
+FINAL_V_ARGS = ["-c:v", "h264_nvenc", "-preset", "p7", "-tune", "hq", "-rc", "vbr_hq", "-b:v", "15M",
+                "-maxrate", "20M", "-bufsize", "30M"]
+FINAL_CPU_ARGS = ["-c:v", "libx264", "-preset", "slow", "-b:v", "15M", "-maxrate", "20M", "-bufsize", "30M"]
+FINAL_A_ARGS = ["-c:a", "aac", "-b:a", "320k"]
+
+
+def _fcodec(f):
+    v = (f.get("vcodec") or "none").lower()
+    if v.startswith("av01"):
+        return "av1"
+    if v.startswith(("vp09", "vp9")):
+        return "vp9"
+    if v.startswith("avc1"):
+        return "h264"
+    return ""
+
+
+def _fq(f):
+    return (f.get("height") or 0, f.get("fps") or 0, f.get("tbr") or 0)
+
+
+def _fdesc(f):
+    fps = int(round(f.get("fps") or 0))
+    return f"{f.get('height') or '?'}p{fps if fps > 30 else ''} {_fcodec(f) or f.get('vcodec')} ({f.get('format_id')})"
+
+
+def format_table(info):
+    """Bảng định dạng giống `yt-dlp --list-formats` (rút gọn). / A shortened `yt-dlp --list-formats` table."""
+    rows = ["  ID      EXT   RES        FPS  CODEC          SIZE / TBR"]
+    for f in info.get("formats") or []:
+        if f.get("vcodec") in (None, "none") and f.get("acodec") in (None, "none"):
+            continue                                   # ảnh xem trước (storyboard) / storyboards
+        kind = "video" if f.get("acodec") in (None, "none") else ("audio" if f.get("vcodec") in (None, "none") else "v+a")
+        res = f"{f.get('width') or ''}x{f.get('height')}" if f.get("height") else "audio only"
+        size = f.get("filesize") or f.get("filesize_approx")
+        rows.append("  %-7s %-5s %-10s %-4s %-14s %s %s" % (
+            f.get("format_id", ""), f.get("ext", ""), res, int(f.get("fps") or 0) or "",
+            (f.get("vcodec") if kind != "audio" else f.get("acodec")) or "", f"{size / 1e6:.0f}MB" if size else "",
+            f"{int(f.get('tbr') or 0)}k {kind}"))
+    return "\n".join(rows)
+
+
+def choose_video_formats(info, max_h=0, force="", kind="both"):
+    """Chọn định dạng hình + tiếng. Trả về dict {mode, video, audio, container, note}.
+    mode: 'av1' (giữ nguyên) | 'vp9' (đổi sang H.264) | 'h264' (giữ nguyên, YouTube không có AV1/VP9).
+    Pick the video + audio formats. mode: 'av1' (keep as is) | 'vp9' (convert to H.264) | 'h264' (keep as is).
+    kind: 'both' (hình+tiếng) | 'video' (chỉ hình) | 'audio' (chỉ tiếng, mode='audio')."""
+    fmts = info.get("formats") or []
+
+    def ok(f):
+        return (not f.get("has_drm") and "premium" not in str(f.get("format_note") or "").lower()
+                and (f.get("protocol") or "") not in ("mhtml",))
+    auds = [f for f in fmts if ok(f) and f.get("vcodec") in (None, "none") and f.get("acodec") not in (None, "none")
+            and "drc" not in str(f.get("format_id"))]       # bỏ bản tiếng nén động (DRC) / skip dynamic-range-compressed audio
+
+    def aq(f):                                       # ưu tiên bản tiếng gốc (video nhiều ngữ) / prefer the original language
+        return (f.get("language_preference") or 0, f.get("abr") or f.get("tbr") or 0)
+    m4a = [f for f in auds if f.get("ext") == "m4a"]
+    if kind != "video" and not auds:
+        raise RuntimeError(T("vd_noformat"))
+    if kind == "audio":                              # m4a (AAC) nạp thẳng vào phần mềm dựng, giữ nguyên chất lượng gốc
+        return {"mode": "audio", "video": None, "audio": max(m4a or auds, key=aq), "container": None,
+                "note": "" if m4a else T("vd_audio_noaac")}
+    vids = [f for f in fmts if ok(f) and _fcodec(f) and f.get("acodec") in (None, "none") and f.get("height")]
+    if not vids:
+        raise RuntimeError(T("vd_noformat"))
+    sdr = [f for f in vids if (f.get("dynamic_range") or "SDR") == "SDR"]    # HDR làm hỏng màu khi đổi H.264
+    vids = sdr or vids
+    if max_h:                                                                # trần độ phân giải / resolution cap
+        low = [f for f in vids if f["height"] <= max_h]
+        vids = low or [f for f in vids if f["height"] == min(g["height"] for g in vids)]
+    vids = [f for f in vids if "m3u8" not in str(f.get("protocol"))] or vids  # ưu tiên tải thẳng, không HLS
+    best = {}
+    for c in ("av1", "vp9", "h264"):
+        cand = [f for f in vids if _fcodec(f) == c]
+        if cand:
+            best[c] = max(cand, key=_fq)
+    force = (force or os.environ.get("CHAT_OVERLAY_FORCE_CODEC", "")).lower()   # chỉ để kiểm thử / test only
+    note = ""
+    if force in best:
+        mode = force
+    elif "av1" in best and ("vp9" not in best or _fq(best["av1"])[0] >= _fq(best["vp9"])[0]):
+        mode = "av1"
+    elif "vp9" in best:
+        mode = "vp9"
+        if "av1" in best:
+            note = T("vd_av1_lower", a=_fdesc(best["av1"]), v=_fdesc(best["vp9"]))
+    else:
+        mode = "h264"
+    if kind == "video":
+        return {"mode": mode, "video": best[mode], "audio": None, "container": None, "note": note}
+    if mode != "vp9" and m4a:                        # AAC trong MP4: DaVinci/Premiere đọc chắc chắn / AAC in MP4: safest
+        audio, container = max(m4a, key=aq), "mp4"
+    else:
+        audio, container = max(auds, key=aq), "mkv"
+    return {"mode": mode, "video": best[mode], "audio": audio, "container": container, "note": note}
+
+
+def _final_path(src):
+    return os.path.splitext(src)[0] + "_final.mp4"
+
+
+def _video_cookie_attempts(cookies_file):
+    att = [("file", cookies_file)] if cookies_file else []
+    return att + [("chrome", ("chrome",)), ("none", None)]
+
+
+def download_video(url, out_dir, max_h=0, delete_src=False, log=print, progress=None, cancel=None, work_dir="",
+                   kind="both"):
+    """Tải video (AV1 hoặc VP9→H.264). Trả về đường dẫn file cuối. / Download a video; returns the final file path."""
+    want = kind                  # biến `kind` bên dưới dùng cho vòng thử cookies / `kind` is reused by the cookie loop below
+    try:
+        import yt_dlp
+    except ImportError:
+        raise RuntimeError(T("dl_noytdlp"))
+    ffmpeg = find_tool("ffmpeg")
+    if not ffmpeg:
+        raise RuntimeError(T("no_ffmpeg"))
+    ycache = os.path.join(prepare_work_dir(work_dir), "yt-dlp-cache")
+    os.makedirs(out_dir, exist_ok=True)
+    log(T("dl_folder", p=os.path.abspath(out_dir)))
+    cookies_file = _find_cookies_file(out_dir, work_dir)
+    if cookies_file:
+        log(T("dl_cookiefile", p=cookies_file))
+    ylog = _YdlLogger()
+    state = {"done": {}, "total": 0.0, "n": 0}
+
+    def check_cancel():
+        if cancel is not None and cancel.is_set():
+            raise Cancelled()
+
+    def dl_hook(d):
+        check_cancel()
+        if d.get("status") != "downloading" or not progress:
+            return
+        fid = (d.get("info_dict") or {}).get("format_id") or d.get("filename")
+        state["done"][fid] = float(d.get("downloaded_bytes") or 0)
+        total = state["total"] or float(d.get("total_bytes") or d.get("total_bytes_estimate") or 0)
+        if total > 0:
+            progress("vdl", min(1.0, sum(state["done"].values()) / total))
+
+    def pp_hook(d):
+        check_cancel()
+        if d.get("status") == "started" and progress and d.get("postprocessor") in ("Merger", "FFmpegMerger"):
+            progress("vmerge", -1)
+
+    base = {"quiet": True, "no_warnings": True, "noprogress": True, "logger": ylog, "noplaylist": True,
+            "cachedir": ycache, "ffmpeg_location": os.path.dirname(ffmpeg),
+            "retries": 10, "fragment_retries": 10, "extractor_retries": 5, "socket_timeout": 30,
+            "retry_sleep_functions": {k: (lambda n: min(2 ** n, 30)) for k in ("http", "fragment", "extractor")}}
+    attempts = _video_cookie_attempts(cookies_file)
+    info, used, choice = None, None, None
+    if progress:
+        progress("vlist", -1)
+    log(T("vd_listing"))
+    for i, (kind, cookies) in enumerate(attempts):
+        opts = dict(base)
+        if kind == "file":
+            opts["cookiefile"] = cookies
+        elif kind == "chrome":
+            opts["cookiesfrombrowser"] = cookies
+        ylog.errors.clear()
+        try:
+            with yt_dlp.YoutubeDL(opts) as ydl:
+                info = ydl.extract_info(url, download=False) or {}
+            used = opts
+            break
+        except Cancelled:
+            raise
+        except Exception as e:
+            check_cancel()
+            msg = _strip_ansi(e) or (ylog.errors[-1] if ylog.errors else repr(e))
+            if kind != "none" and i < len(attempts) - 1 and "cookie" in msg.lower():
+                log(T("dl_cookie_fail", e=_short_err(msg)[:200]))
+                continue
+            if _is_network_error(msg):
+                raise RuntimeError(T("vd_net", e=_short_err(msg)[:160]))
+            raise RuntimeError(T("vd_fail", e=msg, upd=T("upd_app")))
+    check_cancel()
+    if info.get("_type") in ("playlist", "multi_video"):
+        raise RuntimeError(T("dl_playlist"))
+    if info.get("is_live"):
+        raise RuntimeError(T("vd_live"))
+    log(f"   Video: {info.get('title', '')}")
+    log(format_table(info))
+    choice = choose_video_formats(info, max_h, kind=want)
+    v, a = choice["video"], choice["audio"]
+    adesc = f"{a.get('ext')} {int(a.get('abr') or 0)}k ({a.get('format_id')})" if a else T("vd_noaudio")
+    if choice["mode"] == "audio":
+        log(T("vd_pick_audio", a=adesc))
+    elif want == "video":
+        log(T("vd_pick_video", v=_fdesc(v), k=T("vd_will_conv" if choice["mode"] == "vp9" else "vd_keep")))
+    else:
+        log(T("vd_pick_" + choice["mode"], v=_fdesc(v), a=adesc))
+    if choice["note"]:
+        log(choice["note"])
+    picked = [f for f in (v, a) if f]
+    state["total"] = float(sum((f.get("filesize") or f.get("filesize_approx") or 0) for f in picked))
+    suffix = {"both": "", "video": "_video", "audio": "_audio"}[want]   # không đè lên file hình+tiếng đã tải / don't clash
+    opts = dict(used)
+    opts.update({"format": "+".join(f["format_id"] for f in picked),
+                 "outtmpl": os.path.join(out_dir, "%(title).90s [%(id)s]" + suffix + ".%(ext)s"), "continuedl": True,
+                 "progress_hooks": [dl_hook], "postprocessor_hooks": [pp_hook], "overwrites": False})
+    if len(picked) == 2:
+        opts["merge_output_format"] = choice["container"]
+    ylog.errors.clear()
+    try:
+        with yt_dlp.YoutubeDL(opts) as ydl:
+            res = ydl.extract_info(url, download=True) or {}
+    except Cancelled:
+        raise
+    except Exception as e:
+        check_cancel()
+        msg = _strip_ansi(e) or (ylog.errors[-1] if ylog.errors else repr(e))
+        if _is_network_error(msg):
+            raise RuntimeError(T("vd_net", e=_short_err(msg)[:160]))
+        raise RuntimeError(T("vd_fail", e=msg, upd=T("upd_app")))
+    check_cancel()
+    src = ((res.get("requested_downloads") or [{}])[0]).get("filepath") or ""
+    if not os.path.isfile(src):
+        raise RuntimeError(T("vd_nofile"))
+    log(T("vd_downloaded", p=src, mb=os.path.getsize(src) / 1e6))
+    if choice["mode"] not in ("vp9",):
+        return src
+    final = _final_path(src)
+    convert_to_final(ffmpeg, src, final, float(info.get("duration") or 0), log, progress, cancel)
+    if delete_src:
+        try:
+            os.remove(src)
+            log(T("vd_src_deleted", p=src))
+        except OSError:
+            pass
+    return final
+
+
+def convert_to_final(ffmpeg, src, dst, duration, log=print, progress=None, cancel=None):
+    """VP9 → H.264 + AAC (*_final.mp4). Ghi ra file .part rồi đổi tên, nên file dở dang không bị nhầm là xong.
+    VP9 → H.264 + AAC. Writes to a .part file then renames, so an interrupted file is never mistaken for a finished one."""
+    gpu = _encoder_works(ffmpeg, "h264_nvenc")
+    log(T("vd_conv", e="h264_nvenc (GPU)" if gpu else "libx264 (CPU)", p=dst))
+    if not gpu:
+        log(T("vd_conv_cpu"))
+    tmp = dst + ".part.mp4"
+    cmd = ([ffmpeg, "-y", "-v", "error", "-nostdin", "-progress", "pipe:1", "-i", src, "-map", "0:v:0", "-map", "0:a:0?"]
+           + (FINAL_V_ARGS if gpu else FINAL_CPU_ARGS) + ["-pix_fmt", "yuv420p"] + FINAL_A_ARGS
+           + ["-movflags", "+faststart", tmp])
+    try:
+        run_ffmpeg(cmd, duration, progress, cancel, log)
+        os.replace(tmp, dst)
+    finally:
+        if os.path.exists(tmp):
+            try:
+                os.remove(tmp)
+            except OSError:
+                pass
+    log(T("vd_final", p=dst, mb=os.path.getsize(dst) / 1e6))
+
+
 ENCODER_ORDER = ["av1_nvenc", "hevc_nvenc", "av1_qsv", "hevc_qsv", "hevc_amf", "hevc_videotoolbox",
                  "h264_nvenc", "h264_qsv", "h264_amf", "h264_videotoolbox", "libx264"]
 
@@ -2574,7 +3018,14 @@ ENC_OPTS = [("auto", "Tự động (ưu tiên GPU)", "Auto (prefer GPU)"),
             ("hevc_videotoolbox", "Mac – HEVC (H.265)", "Mac – HEVC (H.265)"),
             ("libx264", "CPU – H.264 (chậm)", "CPU – H.264 (slow)"),
             ("libsvtav1", "CPU – AV1 SVT (rất chậm)", "CPU – AV1 SVT (very slow)")]
-OPT_LISTS = {"fmt": FMT_OPTS, "style": STYLE_OPTS, "position": POS_OPTS, "encoder": ENC_OPTS}
+MAXH_OPTS = [("0", "Cao nhất có thể", "Highest available"), ("2160", "2160p (4K)", "2160p (4K)"),
+             ("1440", "1440p (2K)", "1440p (2K)"), ("1080", "1080p", "1080p"), ("720", "720p", "720p"),
+             ("480", "480p", "480p")]
+VKIND_OPTS = [("both", "Hình + tiếng (ghép lại)", "Video + audio (merged)"),
+              ("video", "Chỉ hình", "Video only"),
+              ("audio", "Chỉ tiếng (m4a gốc, không đổi mã)", "Audio only (original m4a, not re-encoded)")]
+OPT_LISTS = {"fmt": FMT_OPTS, "style": STYLE_OPTS, "position": POS_OPTS, "encoder": ENC_OPTS, "maxh": MAXH_OPTS,
+             "vkind": VKIND_OPTS}
 # (key, Tiếng Việt, English, mặc định/default, lưu lại giữa các lần mở/persist)
 NUM_FIELDS = [
     ("max_messages", "Số tin tối đa", "Max messages on screen", "10", True),
@@ -2684,9 +3135,17 @@ def launch_gui():
     except RuntimeError:
         pass
     paths["dldir"] = SV(st.get("download_dir", ""))
+    paths["viddir"] = SV(st.get("video_dir", ""))
+    vurl = SV()                         # tab Tải video: giữ ngoài build() để không mất khi đổi ngôn ngữ
+    v_delsrc = tk.BooleanVar(value=bool(st.get("video_del_src", False)))
+    tab_idx = [0]
+    win_fixed = [False]
+    ytver = SV("")
+    yt_checked = [float(st.get("ytdlp_checked", 0) or 0)]
     nums = {k: SV(str(st.get(k, d)) if keep else d) for k, _, _, d, keep in NUM_FIELDS}
     codes = {}
-    for key, default in (("fmt", "prores"), ("style", "text"), ("position", "bottom-left"), ("encoder", "auto")):
+    for key, default in (("fmt", "prores"), ("style", "text"), ("position", "bottom-left"), ("encoder", "auto"),
+                         ("maxh", "0"), ("vkind", "both")):
         val = st.get(key, default)
         codes[key] = val if any(c == val for c, _, _ in OPT_LISTS[key]) else default
     v_av = tk.BooleanVar(value=bool(st.get("avatars", True)))
@@ -2700,7 +3159,8 @@ def launch_gui():
         d = {"lang": LANG, "work_dir": paths["work"].get().strip(), "download_dir": paths["dldir"].get().strip(),
              "avatars": v_av.get(),
              "box_only": v_canvas.get(), "share_frames": v_share.get(), "preview_at": v_prev.get(),
-             "cookie_browser": v_browser.get()}
+             "cookie_browser": v_browser.get(), "video_dir": paths["viddir"].get().strip(),
+             "video_del_src": v_delsrc.get(), "ytdlp_checked": yt_checked[0]}
         d.update(codes)
         for k, _, _, _, keep in NUM_FIELDS:
             if keep:
@@ -2718,8 +3178,8 @@ def launch_gui():
         busy[0] = flag
         for b in W.get("actions", []):
             b.config(state="disabled" if flag else "normal")
-        if "cancel" in W:
-            W["cancel"].config(state="normal" if flag else "disabled")
+        for b in W.get("cancels", []):
+            b.config(state="normal" if flag else "disabled")
         if "lang" in W:
             W["lang"].config(state="disabled" if flag else "readonly")
 
@@ -2727,15 +3187,35 @@ def launch_gui():
         for w in root.winfo_children():
             w.destroy()
         W.clear()
-        frm = ttk.Frame(root, padding=12)
-        frm.pack(fill="both", expand=True)
+        outer = ttk.Frame(root, padding=12)
+        outer.pack(fill="both", expand=True)
+        top = ttk.Frame(outer)
+        top.pack(fill="x")
+        bot = ttk.Frame(outer)                     # trạng thái + thanh tiến độ + log dùng chung cho 2 tab / shared by both tabs
+        bot.pack(side="bottom", fill="both", expand=True)
+        nb = ttk.Notebook(outer)
+        nb.pack(side="top", fill="x", pady=(4, 0))
+        frm = ttk.Frame(nb, padding=(4, 8))
         frm.columnconfigure(1, weight=1)
+        nb.add(frm, text=T("g_tab_chat"))
+        vfrm = ttk.Frame(nb, padding=(4, 8))
+        vfrm.columnconfigure(1, weight=1)
+        nb.add(vfrm, text=T("g_tab_video"))
+        W["nb"] = nb
+        nb.select(tab_idx[0])
+        def fit_tab(_e=None):
+            """Tab Tải video thấp hơn tab Khung chat: thu notebook lại để ô log phía dưới to ra.
+            The video tab is shorter than the chat tab: shrink the notebook so the log below gets the spare room."""
+            tab_idx[0] = nb.index(nb.select())
+            root.update_idletasks()
+            if not win_fixed[0]:
+                root.geometry(f"{root.winfo_width()}x{root.winfo_height()}")   # giữ cỡ cửa sổ / keep the window size
+                win_fixed[0] = True
+            nb.configure(height=nb.nametowidget(nb.select()).winfo_reqheight())
+        nb.bind("<<NotebookTabChanged>>", fit_tab)
         P = dict(padx=5, pady=3)
         r = 0
 
-        top = ttk.Frame(frm)
-        top.grid(row=r, column=0, columnspan=3, sticky="ew")
-        r += 1
         lang_var = SV(LANG_NAMES[LANG])
         cb = ttk.Combobox(top, textvariable=lang_var, values=list(LANG_NAMES.values()), state="readonly", width=12)
         cb.pack(side="right")
@@ -2822,23 +3302,65 @@ def launch_gui():
         b_run.pack(side="left", padx=4)
         b_cancel = ttk.Button(bar, text=T("g_cancel"), command=cancel_ev.set)
         b_cancel.pack(side="left", padx=4)
-        W["actions"] = [b_dl, b_prev, b_run]
-        W["cancel"] = b_cancel
+
+        # ---- tab "Tải video" / "Download video" tab
+        vr = 0
+        ttk.Label(vfrm, text=T("gv_hint"), wraplength=700, justify="left").grid(
+            row=vr, column=0, columnspan=3, sticky="w", **P)
+        vr += 1
+        ttk.Label(vfrm, text=T("g_url")).grid(row=vr, column=0, sticky="w", **P)
+        ttk.Entry(vfrm, textvariable=vurl).grid(row=vr, column=1, sticky="ew", **P)
+        b_vdl = ttk.Button(vfrm, text=T("gv_go"), command=start_video)
+        b_vdl.grid(row=vr, column=2, sticky="ew", **P)
+        vr += 1
+        ttk.Label(vfrm, text=T("gv_dir")).grid(row=vr, column=0, sticky="w", **P)
+        ttk.Entry(vfrm, textvariable=paths["viddir"]).grid(row=vr, column=1, sticky="ew", **P)
+
+        def browse_vdir():
+            p = filedialog.askdirectory(initialdir=paths["viddir"].get().strip() or None)
+            if p:
+                paths["viddir"].set(p)
+                save()
+        ttk.Button(vfrm, text=T("g_browse"), command=browse_vdir).grid(row=vr, column=2, sticky="ew", **P)
+        vr += 1
+        ttk.Label(vfrm, text=T("gv_kind")).grid(row=vr, column=0, sticky="w", **P)
+        kd_var = SV(_opt_label("vkind", codes["vkind"]))
+        kd = ttk.Combobox(vfrm, textvariable=kd_var, state="readonly", width=40,
+                          values=[_opt_label("vkind", code) for code, _, _ in OPT_LISTS["vkind"]])
+        kd.grid(row=vr, column=1, sticky="w", **P)
+        kd.bind("<<ComboboxSelected>>", lambda e: codes.__setitem__("vkind", _opt_code("vkind", kd_var.get())))
+        vr += 1
+        ttk.Label(vfrm, text=T("gv_maxh")).grid(row=vr, column=0, sticky="w", **P)
+        mh_var = SV(_opt_label("maxh", codes["maxh"]))
+        mh = ttk.Combobox(vfrm, textvariable=mh_var, state="readonly", width=24,
+                          values=[_opt_label("maxh", code) for code, _, _ in OPT_LISTS["maxh"]])
+        mh.grid(row=vr, column=1, sticky="w", **P)
+        mh.bind("<<ComboboxSelected>>", lambda e: codes.__setitem__("maxh", _opt_code("maxh", mh_var.get())))
+        vr += 1
+        ttk.Checkbutton(vfrm, text=T("gv_del"), variable=v_delsrc).grid(row=vr, column=0, columnspan=3, sticky="w", **P)
+        vr += 1
+        b_vcancel = ttk.Button(vfrm, text=T("g_cancel"), command=cancel_ev.set)
+        b_vcancel.grid(row=vr, column=2, sticky="ew", **P)
+
+        vr += 1
+        ttk.Label(vfrm, textvariable=ytver).grid(row=vr, column=0, columnspan=2, sticky="w", **P)
+        ttk.Button(vfrm, text=T("gv_upd"), command=lambda: start_ytdlp_check(True)).grid(
+            row=vr, column=2, sticky="ew", **P)
+        W["actions"] = [b_dl, b_prev, b_run, b_vdl]
+        W["cancels"] = [b_cancel, b_vcancel]
 
         if not status.get() or not busy[0]:
             status.set(T("g_ready"))
-        ttk.Label(frm, textvariable=status).grid(row=r, column=0, columnspan=3, sticky="w", **P)
-        r += 1
-        pb = ttk.Progressbar(frm, maximum=1000)
-        pb.grid(row=r, column=0, columnspan=3, sticky="ew", **P)
-        r += 1
+        ttk.Label(bot, textvariable=status).pack(fill="x", **P)
+        pb = ttk.Progressbar(bot, maximum=1000)
+        pb.pack(fill="x", **P)
         W["pb"] = pb
-        txt = tk.Text(frm, height=11, wrap="word")
-        txt.grid(row=r, column=0, columnspan=3, sticky="nsew", **P)
-        frm.rowconfigure(r, weight=1)
+        txt = tk.Text(bot, height=7, wrap="word")
+        txt.pack(fill="both", expand=True, **P)
         txt.insert("end", "\n".join(log_lines) + ("\n" if log_lines else ""))
         W["txt"] = txt
         set_busy(busy[0])
+        root.after(50, fit_tab)
 
     def collect():
         o = Options()
@@ -2944,6 +3466,57 @@ def launch_gui():
                 q.put(("err", str(e)))
         threading.Thread(target=work, daemon=True).start()
 
+    def start_video():
+        url = vurl.get().strip()
+        if not re.match(r"https?://", url):
+            messagebox.showerror(APP_TITLE, T("g_err_url"))
+            return
+        out_dir = os.path.expanduser(paths["viddir"].get().strip()) or default_download_dir()
+        max_h, del_src, work_dir = int(codes["maxh"]), v_delsrc.get(), paths["work"].get().strip()
+        kind = codes["vkind"]
+        begin()
+        log_lines.clear()
+        W["txt"].delete("1.0", "end")
+        W["pb"].config(mode="indeterminate")
+        W["pb"].start(15)
+
+        def work():
+            try:
+                p = download_video(url, out_dir, max_h, del_src, log=lambda s: q.put(("log", s)),
+                                   progress=lambda ph, f: q.put(("prog", ph, f)), cancel=cancel_ev, work_dir=work_dir,
+                                   kind=kind)
+                q.put(("video_ready", p))
+            except Cancelled:
+                q.put(("cancel",))
+            except Exception as e:
+                q.put(("log", traceback.format_exc()))
+                q.put(("err", str(e)))
+        threading.Thread(target=work, daemon=True).start()
+
+    def start_ytdlp_check(manual):
+        if manual:
+            add_log(T("yu_checking"))
+
+        def work():
+            try:
+                cur = ytdlp_current_version()
+                q.put(("ytver", cur))
+                q.put(("ytdlp_info", cur, ytdlp_latest_version(), manual))
+            except Exception as e:
+                q.put(("ytdlp_err", str(e), manual))
+        threading.Thread(target=work, daemon=True).start()
+
+    def start_ytdlp_update(tag):
+        add_log(T("yu_getting", v=tag))
+
+        def work():
+            try:
+                ytdlp_download_update(tag)
+                q.put(("ytdlp_done", tag))
+            except Exception as e:
+                q.put(("ytdlp_err", str(e), True))
+        threading.Thread(target=work, daemon=True).start()
+
     def start_export_cookies():
         browser = v_browser.get().strip() or "chrome"
         dest_dir = (os.path.expanduser(paths["dldir"].get().strip()) or
@@ -2989,9 +3562,44 @@ def launch_gui():
                     ph, f = it[1], it[2]
                     if ph == "chat":
                         status.set(T("ph_chat", mb=f / 1e6))
+                    elif f < 0:                  # không biết % (đọc danh sách, ghép) / unknown % (listing, merging)
+                        status.set(T("ph_" + ph) + "…")
+                        if str(W["pb"].cget("mode")) != "indeterminate":
+                            W["pb"].config(mode="indeterminate")
+                            W["pb"].start(15)
                     else:
+                        if str(W["pb"].cget("mode")) != "determinate":
+                            W["pb"].stop()
+                            W["pb"].config(mode="determinate")
                         status.set(f"{T('ph_' + ph)}… {f * 100:.0f}%")
                         W["pb"]["value"] = f * 1000
+                elif kind == "ytver":
+                    ytver.set(T("gv_ytver", v=it[1] + (" ✔" if YTDLP_OVERRIDE else "")))
+                elif kind == "ytdlp_info":
+                    cur, new, manual = it[1], it[2], it[3]
+                    if _vkey(new) > _vkey(cur):
+                        if (manual or time.time() - yt_checked[0] > UPDATE_DAYS * 86400) and messagebox.askyesno(
+                                APP_TITLE, T("yu_new", new=new, cur=cur)):
+                            start_ytdlp_update(new)
+                    elif manual:
+                        add_log(T("yu_latest", cur=cur))
+                        messagebox.showinfo(APP_TITLE, T("yu_latest", cur=cur))
+                    if manual or time.time() - yt_checked[0] > UPDATE_DAYS * 86400:
+                        yt_checked[0] = time.time()
+                        save()
+                elif kind == "ytdlp_done":
+                    add_log(T("yu_done", v=it[1]))
+                    messagebox.showinfo(APP_TITLE, T("yu_done", v=it[1]))
+                elif kind == "ytdlp_err":
+                    add_log(T("yu_fail", e=it[1][:300]))
+                    if it[2]:
+                        messagebox.showerror(APP_TITLE, T("yu_fail", e=it[1][:300]))
+                elif kind == "video_ready":
+                    finish()
+                    W["pb"]["value"] = 1000
+                    status.set(T("gv_done", p=it[1]))
+                    if messagebox.askyesno(APP_TITLE, T("gv_open", p=it[1])):
+                        open_path(os.path.dirname(os.path.abspath(it[1])))
                 elif kind == "chat_ready":
                     finish()
                     paths["chat"].set(it[1])
@@ -3039,6 +3647,7 @@ def launch_gui():
     root.protocol("WM_DELETE_WINDOW", on_close)
     build()
     poll()
+    start_ytdlp_check(False)       # luôn đọc số phiên bản; chỉ hỏi cập nhật nếu đã quá 30 ngày / always read the version; ask only after 30 days
     root.mainloop()
 
 

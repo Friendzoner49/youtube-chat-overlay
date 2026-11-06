@@ -112,6 +112,21 @@ The result is `dist/ChatOverlay.app`. FFmpeg (`brew install ffmpeg`) is still ne
 
 Settings (language, chat download folder, work folder, style, format, sizes…) are remembered between sessions. They are stored in `settings.json` next to `chat_overlay.py`, so nothing is written to your system drive. Only if that folder is read-only does the app fall back to `%APPDATA%\ChatOverlay\` (Windows) or `~/.config/ChatOverlay/`. Settings saved by older versions in `%APPDATA%` are migrated automatically, then removed.
 
+### Download video tab
+
+The **Download video** tab downloads the stream itself. Paste the link, choose a folder and (optionally) a maximum resolution, then press **Download video** — it needs FFmpeg like the rest of the app.
+
+1. It reads the format list (the same data as `yt-dlp --list-formats`, shown in the log).
+2. If an **AV1** stream exists, it downloads the sharpest AV1 (up to your resolution cap) plus AAC audio and merges them into an `.mp4`, untouched. (If YouTube offers a *higher* resolution in VP9 than in AV1, VP9 is used instead so you don't lose sharpness.)
+3. If there is no AV1, it downloads the sharpest **VP9** and converts it with FFmpeg (`h264_nvenc`, preset p7, VBR 15 Mbit/s, AAC 320k) to `<name>_final.mp4`, which DaVinci Resolve and Premiere open reliably. Without an NVIDIA GPU it falls back to the CPU (`libx264`, much slower). Tick *Delete the VP9 source* if you only want the `_final.mp4`.
+4. If a download is cut off (VPN, network), press the button again: the part already downloaded is kept and resumed.
+
+**Download** lets you take only what you need: *Video + audio* (default), *Video only*, or *Audio only*. Audio only saves the original **m4a (AAC)** track untouched — editors such as DaVinci Resolve and Premiere open it directly and nothing is re-encoded, so the quality stays exactly as YouTube stores it. (If a video has no m4a track, the best other audio is used and the log says so.) *Video only* follows the same AV1 / VP9 rules as above; files get a `_video` / `_audio` suffix so they never overwrite a video + audio download.
+
+**Keeping yt-dlp up to date.** YouTube changes often, so the app can update yt-dlp itself. It checks GitHub for a newer yt-dlp about **once a month** when it starts and asks before doing anything; the **Check for yt-dlp update** button does it any time. The official yt-dlp file is downloaded from the yt-dlp GitHub release, verified against that release's SHA-256 checksum, and kept in a `yt-dlp-update` folder next to `settings.json` (restart the app to use it). The tab shows the version in use (✔ = an updated copy is active). It works the same for the Windows `.exe`, the macOS `.app` and running from source.
+
+HDR streams are avoided whenever an SDR version exists (an HDR-only AV1 is skipped in favour of SDR VP9), and DRM-protected and Premium-only streams are skipped. Age-restricted or members-only videos use the same `cookies.txt` as the chat download.
+
 ### Work folder (temp files & caches)
 
 Everything the app writes while processing goes into one **work folder**:
