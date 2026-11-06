@@ -1,12 +1,10 @@
-<img src="assets/icon.png" alt="" width="120" align="right">
+<p align="center"><img src="assets/icon.png" alt="" width="96"></p>
 
-# YouTube Live Chat Overlay
+<h1 align="center">YouTube Live Chat Overlay</h1>
 
-[English](README.md) · **Tiếng Việt**
+<p align="center"><a href="README.md">English</a> · <b>Tiếng Việt</b></p>
 
 Biến phần live chat (chat replay) của một buổi livestream YouTube thành **video khung chat nền trong suốt**, khớp đúng thời gian với buổi live, để đặt chồng lên video trong DaVinci Resolve, Premiere Pro, Final Cut, CapCut…
-
-<br clear="right">
 
 ![Các kiểu khung chat](docs/styles.png)
 

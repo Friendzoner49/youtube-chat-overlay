@@ -1,12 +1,10 @@
-<img src="assets/icon.png" alt="" width="120" align="right">
+<p align="center"><img src="assets/icon.png" alt="" width="96"></p>
 
-# YouTube Live Chat Overlay
+<h1 align="center">YouTube Live Chat Overlay</h1>
 
-**English** · [Tiếng Việt](README.vi.md)
+<p align="center"><b>English</b> · <a href="README.vi.md">Tiếng Việt</a></p>
 
 Turn the live-chat replay of a YouTube stream into a **transparent video of the chat box**, perfectly synced with the stream, so you can stack it on top of your footage in DaVinci Resolve, Premiere Pro, Final Cut, CapCut and other editors.
-
-<br clear="right">
 
 ![Chat styles](docs/styles.png)
 
