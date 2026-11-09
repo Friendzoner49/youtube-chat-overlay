@@ -2381,7 +2381,7 @@ def download_video(url, out_dir, max_h=0, delete_src=False, log=print, progress=
     if cookies_file:
         log(T("dl_cookiefile", p=cookies_file))
     ylog = _YdlLogger()
-    state = {"done": {}, "total": 0.0, "n": 0}
+    state = {"done": {}, "size": {}, "guess": set()}
 
     def check_cancel():
         if cancel is not None and cancel.is_set():
@@ -2393,7 +2393,11 @@ def download_video(url, out_dir, max_h=0, delete_src=False, log=print, progress=
             return
         fid = (d.get("info_dict") or {}).get("format_id") or d.get("filename")
         state["done"][fid] = float(d.get("downloaded_bytes") or 0)
-        total = state["total"] or float(d.get("total_bytes") or d.get("total_bytes_estimate") or 0)
+        if fid in state["guess"] or fid not in state["size"]:    # dung lượng chỉ là ước đoán: lấy số yt-dlp ước khi tải
+            t = float(d.get("total_bytes") or d.get("total_bytes_estimate") or 0)   # / guessed size: use yt-dlp's live figure
+            if t > 0:
+                state["size"][fid] = t
+        total = sum(state["size"].values())
         if total > 0:
             progress("vdl", min(1.0, sum(state["done"].values()) / total))
 
@@ -2457,7 +2461,15 @@ def download_video(url, out_dir, max_h=0, delete_src=False, log=print, progress=
     suffix = {"both": "", "video": "_video", "audio": "_audio"}[want]   # không đè lên file hình+tiếng đã tải / don't clash
     while True:
         picked = [f for f in (v, a) if f]
-        state["total"] = float(sum((f.get("filesize") or f.get("filesize_approx") or 0) for f in picked))
+        # Bản Premium (m3u8) không ghi dung lượng: ước từ bitrate × thời lượng, kẻo tổng chỉ gồm tiếng -> báo 100% ngay
+        # / Premium (m3u8) formats list no size: estimate from bitrate × duration, else the total is audio-only -> instant 100%
+        dur = float(info.get("duration") or 0)
+        state["size"], state["guess"] = {}, set()
+        for f in picked:
+            known = float(f.get("filesize") or f.get("filesize_approx") or 0)
+            if not known:
+                state["guess"].add(f["format_id"])
+            state["size"][f["format_id"]] = known or float(f.get("tbr") or 0) * 125 * dur
         state["done"].clear()
         opts = dict(used)
         opts.update({"format": "+".join(f["format_id"] for f in picked),
