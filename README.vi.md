@@ -47,7 +47,9 @@ Muốn chạy từ mã nguồn? Xem [Chạy từ mã nguồn](#chạy-từ-mã-n
 - **Định dạng:** ProRes 4444, FFV1 lossless, QuickTime Animation, WebM VP9 (đều trong suốt); MP4 phông xanh; hoặc ghép thẳng chat vào video bằng GPU (NVIDIA, Intel, AMD, Apple).
 
 **Tải video**
-- Một nút: đọc danh sách định dạng, chọn luồng tốt nhất, tải và ghép. Độ phân giải tối đa do bạn chọn.
+- Nút **Kiểm tra định dạng** (`yt-dlp --list-formats`): xem video đã tải được chưa, rất hữu ích với livestream vừa kết thúc mà YouTube chưa xử lý xong.
+- Nút **Tải video**: chọn luồng tốt nhất, tải và ghép. Độ phân giải tối đa do bạn chọn.
+- **Có bản Premium →** lấy bản đó rồi đổi sang H.264 (`_final.mp4`) như VP9, vì DaVinci thường không mở được file Premium gốc. Không tải được thì tự lấy bản thường.
 - **Có AV1 →** tải AV1 nét nhất + tiếng AAC, ghép thành `.mp4`, giữ nguyên.
 - **Không có AV1 →** tải VP9 nét nhất rồi đổi bằng FFmpeg (`h264_nvenc`, VBR 15 Mbit/s, AAC 320k) thành `_final.mp4`, DaVinci Resolve và Premiere đọc chắc chắn.
 - **Chỉ hình / chỉ tiếng.** Chỉ tiếng lưu đúng **m4a (AAC)** gốc, không đổi mã.
@@ -70,14 +72,17 @@ Nếu bạn cắt highlight từ buổi live nhiều giờ, hãy xuất chat **r
 
 Dán link, chọn thư mục và (nếu muốn) độ phân giải tối đa, rồi bấm **Tải video**. Cần có FFmpeg.
 
+**Kiểm tra định dạng** (nên bấm trước với livestream): in bảng `yt-dlp --list-formats` vào ô log, cho biết đang có AV1 / VP9 / H.264 / Premium độ phân giải bao nhiêu, nếu bấm Tải bây giờ sẽ được bản nào, và kết luận: đã có AV1 / chưa có AV1 / chưa có định dạng nào (buổi live vừa kết thúc, YouTube đang xử lý: đợi rồi kiểm tra lại) / đang live / chưa bắt đầu. Nút này không tải gì.
+
 1. App đọc danh sách định dạng (cùng dữ liệu với `yt-dlp --list-formats`, hiện trong ô log).
+   - Nếu có bản **Premium** nét bằng hoặc hơn bản thường, app lấy bản Premium rồi đổi thành `_final.mp4` đúng như VP9 (DaVinci thường không mở được file Premium gốc). Tải bản Premium bị từ chối thì app tự chuyển sang các bước dưới.
 2. Nếu có **AV1**, app tải AV1 nét nhất (trong giới hạn bạn chọn) cùng tiếng AAC rồi ghép thành `.mp4`. Nếu YouTube có VP9 độ phân giải *cao hơn* AV1 thì dùng VP9 để không mất độ nét.
 3. Nếu không có AV1, app tải **VP9** nét nhất rồi đổi thành `<tên>_final.mp4` (`h264_nvenc`, preset p7, VBR 15 Mbit/s, AAC 320k). Máy không có card NVIDIA thì tự đổi bằng CPU (`libx264`, chậm hơn nhiều). Tick *Xoá file VP9 gốc* nếu chỉ cần file `_final.mp4`.
 4. Nếu đang tải bị đứt (VPN, mạng), bấm nút lần nữa: phần đã tải được giữ lại và tải tiếp.
 
 Ô **Tải gì** cho phép chỉ lấy phần cần dùng: *Hình + tiếng* (mặc định), *Chỉ hình* hoặc *Chỉ tiếng*. Chỉ tiếng giữ đúng đường **m4a (AAC)** gốc, nên phần mềm dựng nạp thẳng được và chất lượng đúng như YouTube lưu. Video nào không có m4a thì lấy bản tiếng tốt nhất còn lại và ghi chú trong log. File có đuôi tên `_video` / `_audio` nên không đè lên file hình + tiếng đã tải.
 
-Bản HDR được tránh khi có bản SDR; bản có DRM hoặc chỉ dành cho Premium bị bỏ qua. Video giới hạn tuổi / dành cho hội viên dùng chung `cookies.txt` với phần tải chat.
+Bản HDR được tránh khi có bản SDR; bản có DRM bị bỏ qua. Video giới hạn tuổi / dành cho hội viên dùng chung `cookies.txt` với phần tải chat.
 
 ### Giữ yt-dlp luôn mới
 

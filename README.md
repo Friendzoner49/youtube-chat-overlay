@@ -47,7 +47,9 @@ Prefer running from source? See [Run from source](#run-from-source).
 - **Outputs:** ProRes 4444, FFV1 lossless, QuickTime Animation, VP9 WebM (all transparent); green-screen MP4; or burn the chat straight into the video with GPU encoding (NVIDIA, Intel, AMD, Apple).
 
 **Download video**
-- One button: reads the format list, picks the best stream, downloads and merges it. Max resolution is your choice.
+- **Check formats** button (`yt-dlp --list-formats`): see whether a video can be downloaded yet, handy for a just-ended stream YouTube is still processing.
+- **Download video** button: picks the best stream, downloads and merges it. Max resolution is your choice.
+- **Premium format available →** taken and converted to H.264 (`_final.mp4`) like VP9, because DaVinci often can't open the Premium file. If it fails, a normal format is used.
 - **AV1 available →** sharpest AV1 + AAC audio, merged into an `.mp4`, untouched.
 - **No AV1 →** sharpest VP9, converted with FFmpeg (`h264_nvenc`, VBR 15 Mbit/s, AAC 320k) to `_final.mp4`, which DaVinci Resolve and Premiere open reliably.
 - **Video only / audio only.** Audio only saves the original **m4a (AAC)**, with no re-encoding.
@@ -70,14 +72,17 @@ If you cut highlights from a multi-hour stream, render the chat **only for each 
 
 Paste a link, choose a folder and (optionally) a maximum resolution, then press **Download video**. FFmpeg is required.
 
+**Check formats** (press it first for livestreams): prints the `yt-dlp --list-formats` table in the log, the best AV1 / VP9 / H.264 / Premium resolution available, what Download would pick right now, and a verdict: AV1 ready / no AV1 yet / no formats yet (the stream just ended and YouTube is still processing: wait and check again) / live now / not started. It downloads nothing.
+
 1. The app reads the format list (the same data as `yt-dlp --list-formats`, shown in the log).
+   - If a **Premium** format is at least as sharp as the best normal one, it is taken and converted to `_final.mp4` exactly like VP9 (DaVinci often can't open the Premium file as is). If the Premium download is refused, the app falls back to the steps below.
 2. If an **AV1** stream exists, it downloads the sharpest AV1 (within your cap) plus AAC audio and merges them into an `.mp4`. If YouTube offers a *higher* resolution in VP9 than in AV1, VP9 is used so you don't lose sharpness.
 3. If there is no AV1, it downloads the sharpest **VP9** and converts it to `<name>_final.mp4` (`h264_nvenc`, preset p7, VBR 15 Mbit/s, AAC 320k). Without an NVIDIA GPU it falls back to the CPU (`libx264`, much slower). Tick *Delete the VP9 source* if you only want the `_final.mp4`.
 4. If a download is cut off (VPN, network), press the button again: the part already downloaded is kept and resumed.
 
 **Download** lets you take only what you need: *Video + audio* (default), *Video only* or *Audio only*. Audio only keeps the original m4a (AAC) track, so editors open it directly and the quality is exactly what YouTube stores. If a video has no m4a, the best other audio is used and the log says so. Files get a `_video` / `_audio` suffix so they never overwrite a video + audio download.
 
-HDR streams are avoided whenever an SDR version exists; DRM-protected and Premium-only streams are skipped. Age-restricted or members-only videos use the same `cookies.txt` as the chat download.
+HDR streams are avoided whenever an SDR version exists; DRM-protected streams are skipped. Age-restricted or members-only videos use the same `cookies.txt` as the chat download.
 
 ### Keeping yt-dlp up to date
 

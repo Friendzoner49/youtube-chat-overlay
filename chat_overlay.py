@@ -228,16 +228,35 @@ STRINGS = {
     # ---- video download tab
     "g_tab_chat": ("Khung chat", "Chat overlay"),
     "g_tab_video": ("Tải video", "Download video"),
-    "gv_hint": ("Dán link YouTube rồi bấm một nút. Có AV1 thì tải AV1 nét nhất; không có thì tải VP9 nét nhất rồi đổi "
-                "sang H.264 (_final.mp4) để dùng trong DaVinci/Premiere. Chỉ lấy tiếng thì được file m4a gốc, không đổi mã.",
-                "Paste a YouTube link and press one button. If AV1 exists the sharpest AV1 is downloaded; otherwise the "
-                "sharpest VP9, converted to H.264 (_final.mp4) for DaVinci/Premiere. Audio only gives the original m4a, not re-encoded."),
+    "gv_hint": ("Dán link YouTube, bấm Kiểm tra định dạng để xem video đã tải được chưa (livestream vừa xong có thể chưa có), "
+                "rồi bấm Tải video. Có bản Premium thì lấy bản đó rồi đổi sang H.264 (_final.mp4) như VP9; không thì AV1 nét nhất; không có AV1 thì "
+                "VP9 nét nhất rồi đổi sang H.264 (_final.mp4) để dùng trong DaVinci/Premiere. Chỉ lấy tiếng thì được file m4a gốc, không đổi mã.",
+                "Paste a YouTube link, press Check formats to see whether it can be downloaded yet (a just-ended stream may not be), "
+                "then press Download video. A Premium format is taken and converted to H.264 (_final.mp4) like VP9; otherwise the sharpest AV1; without AV1, "
+                "the sharpest VP9, converted to H.264 (_final.mp4) for DaVinci/Premiere. Audio only gives the original m4a, not re-encoded."),
     "gv_go": ("▶ Tải video", "▶ Download video"),
     "gv_dir": ("Thư mục lưu video (trống = Downloads)", "Video folder (blank = Downloads)"),
     "gv_maxh": ("Độ phân giải tối đa", "Max resolution"),
     "gv_del": ("Xoá file VP9 gốc sau khi đổi xong (giữ lại mỗi file _final.mp4)",
                "Delete the VP9 source after converting (keep only the _final.mp4)"),
-    "gv_ready": ("Dán link YouTube rồi bấm Tải video.", "Paste a YouTube link, then press Download video."),
+    "gv_ready": ("Dán link YouTube, bấm Kiểm tra định dạng, rồi bấm Tải video.",
+                 "Paste a YouTube link, press Check formats, then press Download video."),
+    "gv_check": ("Kiểm tra định dạng", "Check formats"),
+    "vc_have": ("Đang có (hình): {s}", "Available (video): {s}"),
+    "vc_ifnow": ("Nếu bấm Tải video bây giờ:", "If you press Download video now:"),
+    "vc_ok_av1": ("✔ Đã có AV1 ({v}) – bấm Tải video được rồi.", "✔ AV1 is ready ({v}) – you can press Download video."),
+    "vc_no_av1": ("Chưa có AV1, mới có {v}. Tải luôn được, hoặc đợi rồi kiểm tra lại.",
+                  "No AV1 yet, only {v}. Download now, or wait and check again."),
+    "vc_ok_audio": ("✔ Đã có tiếng – bấm Tải video được rồi.", "✔ Audio is ready – you can press Download video."),
+    "vc_none": ("✘ Chưa có định dạng nào. Live vừa xong thì YouTube đang xử lý – đợi rồi kiểm tra lại.",
+                "✘ No formats yet. A just-ended stream is still processing – wait and check again."),
+    "vc_live": ("✘ Video đang phát trực tiếp – đợi buổi live kết thúc rồi kiểm tra lại.",
+                "✘ This video is live right now – wait until the stream ends, then check again."),
+    "vc_upcoming": ("✘ Buổi live chưa bắt đầu – chưa có định dạng nào.", "✘ The stream has not started yet – no formats."),
+    "vc_post_live": ("  ! Buổi live vừa kết thúc, YouTube vẫn đang xử lý bản ghi: bản nét nhất/AV1 có thể chưa có. Nên đợi rồi kiểm tra lại.",
+                     "  ! The stream just ended and YouTube is still processing it: the sharpest/AV1 formats may be missing. Wait and check again."),
+    "vc_hls": ("  ! Hiện chỉ có dạng phát trực tiếp (m3u8) – tải chậm hơn; YouTube xử lý xong sẽ có bản tải thẳng.",
+               "  ! Only the live-stream form (m3u8) exists for now – slower to download; a direct download appears once YouTube finishes."),
     "gv_done": ("Hoàn tất: {p}", "Finished: {p}"),
     "gv_open": ("Đã tải xong:\n{p}\n\nMở thư mục chứa file?", "Download finished:\n{p}\n\nOpen the containing folder?"),
     "ph_vlist": ("Đang đọc danh sách định dạng", "Reading the format list"),
@@ -273,6 +292,12 @@ STRINGS = {
     "gv_ytver": ("yt-dlp đang dùng: {v}", "yt-dlp in use: {v}"),
     "gv_upd": ("Kiểm tra cập nhật yt-dlp", "Check for yt-dlp update"),
     "vd_pick_video": ("▶ Chỉ hình: {v} → {k}", "▶ Video only: {v} → {k}"),
+    "vd_pick_premium": ("▶ Có bản Premium, chọn: {v} + tiếng {a} → sẽ đổi sang H.264 (_final.mp4) cho DaVinci.",
+                        "▶ Premium format found, picked: {v} + audio {a} → will be converted to H.264 (_final.mp4) for DaVinci."),
+    "vd_prem_fail": ("  ! Không tải được bản Premium ({e}) – có thể cần cookies tài khoản YouTube Premium. Chuyển sang bản thường…",
+                     "  ! Could not download the Premium format ({e}) – it may need YouTube Premium cookies. Using a normal format…"),
+    "vc_ok_premium": ("✔ Có bản Premium ({v}) – bấm Tải video sẽ lấy bản này rồi đổi sang H.264.",
+                      "✔ Premium format available ({v}) – Download video takes it, then converts to H.264."),
     "vd_keep": ("giữ nguyên, không đổi mã", "kept as is, not re-encoded"),
     "vd_will_conv": ("sẽ đổi sang H.264 (_final.mp4)", "will be converted to H.264 (_final.mp4)"),
     "vd_noaudio": ("(không tiếng)", "(no audio)"),
@@ -2172,9 +2197,14 @@ def _fq(f):
     return (f.get("height") or 0, f.get("fps") or 0, f.get("tbr") or 0)
 
 
+def _is_premium(f):
+    return "premium" in str(f.get("format_note") or "").lower()
+
+
 def _fdesc(f):
     fps = int(round(f.get("fps") or 0))
-    return f"{f.get('height') or '?'}p{fps if fps > 30 else ''} {_fcodec(f) or f.get('vcodec')} ({f.get('format_id')})"
+    prem = " Premium" if _is_premium(f) else ""
+    return f"{f.get('height') or '?'}p{fps if fps > 30 else ''} {_fcodec(f) or f.get('vcodec')}{prem} ({f.get('format_id')})"
 
 
 def format_table(info):
@@ -2193,11 +2223,13 @@ def format_table(info):
     return "\n".join(rows)
 
 
-def choose_video_formats(info, max_h=0, force="", kind="both"):
+def choose_video_formats(info, max_h=0, force="", kind="both", premium=True):
     """Chọn định dạng hình + tiếng. Trả về dict {mode, video, audio, container, note}.
     mode: 'av1' (giữ nguyên) | 'vp9' (đổi sang H.264) | 'h264' (giữ nguyên, YouTube không có AV1/VP9).
     Pick the video + audio formats. mode: 'av1' (keep as is) | 'vp9' (convert to H.264) | 'h264' (keep as is).
-    kind: 'both' (hình+tiếng) | 'video' (chỉ hình) | 'audio' (chỉ tiếng, mode='audio')."""
+    kind: 'both' (hình+tiếng) | 'video' (chỉ hình) | 'audio' (chỉ tiếng, mode='audio').
+    premium=True: có bản Premium nét bằng/hơn bản thường thì chọn nó (mode='premium', đổi sang H.264 như VP9).
+    premium=True: a Premium format at least as sharp as the best normal one wins (mode='premium', converted to H.264 like VP9)."""
     fmts = info.get("formats") or []
 
     def ok(f):
@@ -2214,14 +2246,21 @@ def choose_video_formats(info, max_h=0, force="", kind="both"):
     if kind == "audio":                              # m4a (AAC) nạp thẳng vào phần mềm dựng, giữ nguyên chất lượng gốc
         return {"mode": "audio", "video": None, "audio": max(m4a or auds, key=aq), "container": None,
                 "note": "" if m4a else T("vd_audio_noaac")}
-    vids = [f for f in fmts if ok(f) and _fcodec(f) and f.get("acodec") in (None, "none") and f.get("height")]
-    if not vids:
+    def video_only(f):
+        return _fcodec(f) and f.get("acodec") in (None, "none") and f.get("height") and not f.get("has_drm")
+
+    def cap(vs):
+        sdr = [f for f in vs if (f.get("dynamic_range") or "SDR") == "SDR"]  # HDR làm hỏng màu khi đổi H.264
+        vs = sdr or vs
+        if max_h and vs:                                                     # trần độ phân giải / resolution cap
+            low = [f for f in vs if f["height"] <= max_h]
+            vs = low or [f for f in vs if f["height"] == min(g["height"] for g in vs)]
+        return vs
+    vids = [f for f in fmts if ok(f) and video_only(f)]
+    prem = cap([f for f in fmts if premium and video_only(f) and _is_premium(f)]) if kind != "audio" else []
+    if not vids and not prem:
         raise RuntimeError(T("vd_noformat"))
-    sdr = [f for f in vids if (f.get("dynamic_range") or "SDR") == "SDR"]    # HDR làm hỏng màu khi đổi H.264
-    vids = sdr or vids
-    if max_h:                                                                # trần độ phân giải / resolution cap
-        low = [f for f in vids if f["height"] <= max_h]
-        vids = low or [f for f in vids if f["height"] == min(g["height"] for g in vids)]
+    vids = cap(vids)
     vids = [f for f in vids if "m3u8" not in str(f.get("protocol"))] or vids  # ưu tiên tải thẳng, không HLS
     best = {}
     for c in ("av1", "vp9", "h264"):
@@ -2238,11 +2277,15 @@ def choose_video_formats(info, max_h=0, force="", kind="both"):
         mode = "vp9"
         if "av1" in best:
             note = T("vd_av1_lower", a=_fdesc(best["av1"]), v=_fdesc(best["vp9"]))
-    else:
+    elif best:
         mode = "h264"
+    if prem and force not in best:
+        bp = max(prem, key=_fq)
+        if not best or _fq(bp)[0] >= max(_fq(f)[0] for f in best.values()):
+            best["premium"], mode, note = bp, "premium", ""
     if kind == "video":
         return {"mode": mode, "video": best[mode], "audio": None, "container": None, "note": note}
-    if mode != "vp9" and m4a:                        # AAC trong MP4: DaVinci/Premiere đọc chắc chắn / AAC in MP4: safest
+    if mode not in ("vp9", "premium") and m4a:       # AAC trong MP4: DaVinci/Premiere đọc chắc chắn / AAC in MP4: safest
         audio, container = max(m4a, key=aq), "mp4"
     else:
         audio, container = max(auds, key=aq), "mkv"
@@ -2258,20 +2301,82 @@ def _video_cookie_attempts(cookies_file):
     return att + [("chrome", ("chrome",)), ("none", None)]
 
 
+def _log_choice(choice, want, log):
+    """Ghi dòng "▶ Chọn …" (định dạng sẽ tải). / Log the "▶ Picked …" line (the formats to be downloaded)."""
+    v, a = choice["video"], choice["audio"]
+    adesc = f"{a.get('ext')} {int(a.get('abr') or 0)}k ({a.get('format_id')})" if a else T("vd_noaudio")
+    if choice["mode"] == "audio":
+        log(T("vd_pick_audio", a=adesc))
+    elif want == "video":
+        log(T("vd_pick_video", v=_fdesc(v), k=T("vd_will_conv" if choice["mode"] in ("vp9", "premium") else "vd_keep")))
+    else:
+        log(T("vd_pick_" + choice["mode"], v=_fdesc(v), a=adesc))
+    if choice["note"]:
+        log(choice["note"])
+
+
+def _format_verdict(info, table, max_h, want, log):
+    """Nút "Kiểm tra định dạng": in bảng định dạng + kết luận đã tải được chưa. Trả về câu kết luận (1 dòng).
+    "Check formats" button: print the format table + whether it can be downloaded yet. Returns a one-line verdict."""
+    st = info.get("live_status") or ""
+    if info.get("is_live") or st == "is_live":
+        verdict = T("vc_live")
+    elif st == "is_upcoming":
+        verdict = T("vc_upcoming")
+    else:
+        if info.get("formats"):
+            log(table or format_table(info))
+        try:
+            choice = choose_video_formats(info, max_h, kind=want)
+        except RuntimeError:
+            choice = None
+        if choice is None:
+            verdict = T("vc_none")
+        else:
+            have = []
+            for pr in (False, True):
+                for c in ("av1", "vp9", "h264"):
+                    hs = [f.get("height") or 0 for f in info.get("formats") or []
+                          if _fcodec(f) == c and f.get("acodec") in (None, "none") and _is_premium(f) == pr]
+                    if hs:
+                        have.append(c.upper() + (" Premium" if pr else "") + f" {max(hs)}p")
+            log(T("vc_have", s=", ".join(have) or "—"))
+            log(T("vc_ifnow"))
+            _log_choice(choice, want, log)
+            v = choice["video"]
+            if v is not None and choice["mode"] != "premium" and "m3u8" in str(v.get("protocol")):
+                log(T("vc_hls"))
+            if choice["mode"] == "audio":
+                verdict = T("vc_ok_audio")
+            elif choice["mode"] == "premium":
+                verdict = T("vc_ok_premium", v=_fdesc(v))
+            elif choice["mode"] == "av1":
+                verdict = T("vc_ok_av1", v=_fdesc(v))
+            else:
+                verdict = T("vc_no_av1", v=_fdesc(v))
+        if st == "post_live":
+            log(T("vc_post_live"))
+    log(verdict)
+    return verdict
+
+
 def download_video(url, out_dir, max_h=0, delete_src=False, log=print, progress=None, cancel=None, work_dir="",
-                   kind="both"):
-    """Tải video (AV1 hoặc VP9→H.264). Trả về đường dẫn file cuối. / Download a video; returns the final file path."""
+                   kind="both", list_only=False):
+    """Tải video (AV1 hoặc VP9→H.264). Trả về đường dẫn file cuối.
+    list_only=True: chỉ in bảng định dạng (yt-dlp --list-formats) + kết luận, không tải; trả về câu kết luận.
+    Download a video; returns the final file path. list_only=True: only list formats + verdict, returns the verdict."""
     want = kind                  # biến `kind` bên dưới dùng cho vòng thử cookies / `kind` is reused by the cookie loop below
     try:
         import yt_dlp
     except ImportError:
         raise RuntimeError(T("dl_noytdlp"))
     ffmpeg = find_tool("ffmpeg")
-    if not ffmpeg:
+    if not ffmpeg and not list_only:
         raise RuntimeError(T("no_ffmpeg"))
     ycache = os.path.join(prepare_work_dir(work_dir), "yt-dlp-cache")
-    os.makedirs(out_dir, exist_ok=True)
-    log(T("dl_folder", p=os.path.abspath(out_dir)))
+    if not list_only:
+        os.makedirs(out_dir, exist_ok=True)
+        log(T("dl_folder", p=os.path.abspath(out_dir)))
     cookies_file = _find_cookies_file(out_dir, work_dir)
     if cookies_file:
         log(T("dl_cookiefile", p=cookies_file))
@@ -2298,10 +2403,13 @@ def download_video(url, out_dir, max_h=0, delete_src=False, log=print, progress=
             progress("vmerge", -1)
 
     base = {"quiet": True, "no_warnings": True, "noprogress": True, "logger": ylog, "noplaylist": True,
-            "cachedir": ycache, "ffmpeg_location": os.path.dirname(ffmpeg),
+            "cachedir": ycache, "ffmpeg_location": os.path.dirname(ffmpeg) if ffmpeg else None,
             "retries": 10, "fragment_retries": 10, "extractor_retries": 5, "socket_timeout": 30,
             "retry_sleep_functions": {k: (lambda n: min(2 ** n, 30)) for k in ("http", "fragment", "extractor")}}
+    if list_only:            # live vừa kết thúc/chưa bắt đầu: không có định dạng vẫn đọc được thông tin, không báo lỗi
+        base["ignore_no_formats_error"] = True   # / just-ended or upcoming live: read the info even with no formats
     attempts = _video_cookie_attempts(cookies_file)
+    table = ""
     info, used, choice = None, None, None
     if progress:
         progress("vlist", -1)
@@ -2316,6 +2424,11 @@ def download_video(url, out_dir, max_h=0, delete_src=False, log=print, progress=
         try:
             with yt_dlp.YoutubeDL(opts) as ydl:
                 info = ydl.extract_info(url, download=False) or {}
+                if list_only and info.get("formats"):
+                    try:                       # đúng bảng của `yt-dlp --list-formats` / the exact --list-formats table
+                        table = _strip_ansi(ydl.render_formats_table(info) or "")
+                    except Exception:
+                        table = ""
             used = opts
             break
         except Cancelled:
@@ -2332,48 +2445,50 @@ def download_video(url, out_dir, max_h=0, delete_src=False, log=print, progress=
     check_cancel()
     if info.get("_type") in ("playlist", "multi_video"):
         raise RuntimeError(T("dl_playlist"))
-    if info.get("is_live"):
+    if info.get("is_live") and not list_only:
         raise RuntimeError(T("vd_live"))
     log(f"   Video: {info.get('title', '')}")
+    if list_only:
+        return _format_verdict(info, table, max_h, want, log)
     log(format_table(info))
     choice = choose_video_formats(info, max_h, kind=want)
     v, a = choice["video"], choice["audio"]
-    adesc = f"{a.get('ext')} {int(a.get('abr') or 0)}k ({a.get('format_id')})" if a else T("vd_noaudio")
-    if choice["mode"] == "audio":
-        log(T("vd_pick_audio", a=adesc))
-    elif want == "video":
-        log(T("vd_pick_video", v=_fdesc(v), k=T("vd_will_conv" if choice["mode"] == "vp9" else "vd_keep")))
-    else:
-        log(T("vd_pick_" + choice["mode"], v=_fdesc(v), a=adesc))
-    if choice["note"]:
-        log(choice["note"])
-    picked = [f for f in (v, a) if f]
-    state["total"] = float(sum((f.get("filesize") or f.get("filesize_approx") or 0) for f in picked))
+    _log_choice(choice, want, log)
     suffix = {"both": "", "video": "_video", "audio": "_audio"}[want]   # không đè lên file hình+tiếng đã tải / don't clash
-    opts = dict(used)
-    opts.update({"format": "+".join(f["format_id"] for f in picked),
-                 "outtmpl": os.path.join(out_dir, "%(title).90s [%(id)s]" + suffix + ".%(ext)s"), "continuedl": True,
-                 "progress_hooks": [dl_hook], "postprocessor_hooks": [pp_hook], "overwrites": False})
-    if len(picked) == 2:
-        opts["merge_output_format"] = choice["container"]
-    ylog.errors.clear()
-    try:
-        with yt_dlp.YoutubeDL(opts) as ydl:
-            res = ydl.extract_info(url, download=True) or {}
-    except Cancelled:
-        raise
-    except Exception as e:
-        check_cancel()
-        msg = _strip_ansi(e) or (ylog.errors[-1] if ylog.errors else repr(e))
-        if _is_network_error(msg):
-            raise RuntimeError(T("vd_net", e=_short_err(msg)[:160]))
-        raise RuntimeError(T("vd_fail", e=msg, upd=T("upd_app")))
+    while True:
+        picked = [f for f in (v, a) if f]
+        state["total"] = float(sum((f.get("filesize") or f.get("filesize_approx") or 0) for f in picked))
+        state["done"].clear()
+        opts = dict(used)
+        opts.update({"format": "+".join(f["format_id"] for f in picked),
+                     "outtmpl": os.path.join(out_dir, "%(title).90s [%(id)s]" + suffix + ".%(ext)s"), "continuedl": True,
+                     "progress_hooks": [dl_hook], "postprocessor_hooks": [pp_hook], "overwrites": False})
+        if len(picked) == 2:
+            opts["merge_output_format"] = choice["container"]
+        ylog.errors.clear()
+        try:
+            with yt_dlp.YoutubeDL(opts) as ydl:
+                res = ydl.extract_info(url, download=True) or {}
+            break
+        except Cancelled:
+            raise
+        except Exception as e:
+            check_cancel()
+            msg = _strip_ansi(e) or (ylog.errors[-1] if ylog.errors else repr(e))
+            if _is_network_error(msg):
+                raise RuntimeError(T("vd_net", e=_short_err(msg)[:160]))
+            if choice["mode"] != "premium":
+                raise RuntimeError(T("vd_fail", e=msg, upd=T("upd_app")))
+            log(T("vd_prem_fail", e=_short_err(msg)[:160]))     # Premium hỏng -> bản thường / Premium failed -> normal
+            choice = choose_video_formats(info, max_h, kind=want, premium=False)
+            v, a = choice["video"], choice["audio"]
+            _log_choice(choice, want, log)
     check_cancel()
     src = ((res.get("requested_downloads") or [{}])[0]).get("filepath") or ""
     if not os.path.isfile(src):
         raise RuntimeError(T("vd_nofile"))
     log(T("vd_downloaded", p=src, mb=os.path.getsize(src) / 1e6))
-    if choice["mode"] not in ("vp9",):
+    if choice["mode"] not in ("vp9", "premium"):
         return src
     final = _final_path(src)
     convert_to_final(ffmpeg, src, final, float(info.get("duration") or 0), log, progress, cancel)
@@ -3310,8 +3425,12 @@ def launch_gui():
         vr += 1
         ttk.Label(vfrm, text=T("g_url")).grid(row=vr, column=0, sticky="w", **P)
         ttk.Entry(vfrm, textvariable=vurl).grid(row=vr, column=1, sticky="ew", **P)
-        b_vdl = ttk.Button(vfrm, text=T("gv_go"), command=start_video)
-        b_vdl.grid(row=vr, column=2, sticky="ew", **P)
+        vbtn = ttk.Frame(vfrm)
+        vbtn.grid(row=vr, column=2, sticky="ew", **P)
+        b_vchk = ttk.Button(vbtn, text=T("gv_check"), command=lambda: start_video(check=True))
+        b_vchk.pack(side="left", fill="x", expand=True)
+        b_vdl = ttk.Button(vbtn, text=T("gv_go"), command=start_video)
+        b_vdl.pack(side="left", fill="x", expand=True, padx=(4, 0))
         vr += 1
         ttk.Label(vfrm, text=T("gv_dir")).grid(row=vr, column=0, sticky="w", **P)
         ttk.Entry(vfrm, textvariable=paths["viddir"]).grid(row=vr, column=1, sticky="ew", **P)
@@ -3346,7 +3465,7 @@ def launch_gui():
         ttk.Label(vfrm, textvariable=ytver).grid(row=vr, column=0, columnspan=2, sticky="w", **P)
         ttk.Button(vfrm, text=T("gv_upd"), command=lambda: start_ytdlp_check(True)).grid(
             row=vr, column=2, sticky="ew", **P)
-        W["actions"] = [b_dl, b_prev, b_run, b_vdl]
+        W["actions"] = [b_dl, b_prev, b_run, b_vchk, b_vdl]
         W["cancels"] = [b_cancel, b_vcancel]
 
         if not status.get() or not busy[0]:
@@ -3466,7 +3585,7 @@ def launch_gui():
                 q.put(("err", str(e)))
         threading.Thread(target=work, daemon=True).start()
 
-    def start_video():
+    def start_video(check=False):
         url = vurl.get().strip()
         if not re.match(r"https?://", url):
             messagebox.showerror(APP_TITLE, T("g_err_url"))
@@ -3484,8 +3603,8 @@ def launch_gui():
             try:
                 p = download_video(url, out_dir, max_h, del_src, log=lambda s: q.put(("log", s)),
                                    progress=lambda ph, f: q.put(("prog", ph, f)), cancel=cancel_ev, work_dir=work_dir,
-                                   kind=kind)
-                q.put(("video_ready", p))
+                                   kind=kind, list_only=check)
+                q.put(("formats_ready" if check else "video_ready", p))
             except Cancelled:
                 q.put(("cancel",))
             except Exception as e:
@@ -3594,6 +3713,9 @@ def launch_gui():
                     add_log(T("yu_fail", e=it[1][:300]))
                     if it[2]:
                         messagebox.showerror(APP_TITLE, T("yu_fail", e=it[1][:300]))
+                elif kind == "formats_ready":
+                    finish()
+                    status.set(it[1])
                 elif kind == "video_ready":
                     finish()
                     W["pb"]["value"] = 1000
