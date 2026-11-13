@@ -95,6 +95,8 @@ Cần cookies đăng nhập YouTube, lưu thành `cookies.txt` trong thư mục 
 - **Không cần đóng trình duyệt (Windows, khuyến nghị):** nạp tiện ích nhỏ [`browser-extension/`](browser-extension) 1 lần (`chrome://extensions` → Developer mode → Load unpacked; xem README của tiện ích). Từ đó nút **Lấy cookies** trong app nói chuyện thẳng với tiện ích qua kết nối cục bộ và tự lưu `cookies.txt`. Tiện ích đọc cookie qua API chính thức của trình duyệt, không đụng tới file cookie đang bị khoá.
 - **Khi đã đóng trình duyệt:** chọn trình duyệt cạnh nút **Lấy cookies** rồi bấm. File cookie bị khoá khi trình duyệt đang chạy, nên phải đóng hẳn (kể cả tiến trình nền / khay hệ thống), nếu không sẽ báo "could not copy cookie database".
 
+YouTube còn cần một chương trình chạy JavaScript để lấy danh sách định dạng video. Cài [Node.js](https://nodejs.org) (bản LTS) hoặc [Deno](https://deno.com); app tự tìm thấy. Nếu thiếu, việc tải có thể báo "This content is age-restricted" dù cookies vẫn đúng.
+
 ## Chi tiết cài đặt
 
 ### Lần đầu mở trên macOS

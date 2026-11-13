@@ -95,6 +95,8 @@ These need your YouTube login cookies, saved as `cookies.txt` in the download fo
 - **Without closing the browser (Windows, recommended):** load the small [`browser-extension/`](browser-extension) once (`chrome://extensions` → Developer mode → Load unpacked; see its README). After that, **Get cookies** in the app talks to the extension over a local native-messaging link and saves `cookies.txt` automatically. It uses the browser's official extension API, not the browser's locked cookie file.
 - **With the browser closed:** pick your browser next to **Get cookies** and press it. The cookie database is locked while the browser runs, so close it completely (including background / tray processes) or you get a "could not copy cookie database" message.
 
+YouTube also requires a JavaScript runtime to list video formats. Install [Node.js](https://nodejs.org) (LTS) or [Deno](https://deno.com); the app finds it automatically. Without one, downloads may fail with "This content is age-restricted" even when your cookies are fine.
+
 ## Installation details
 
 ### macOS first launch

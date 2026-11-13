@@ -77,7 +77,7 @@ def main():
                TMP=os.path.join(work, "tmp"), TEMP=os.path.join(work, "tmp"))
     os.makedirs(env["TMP"], exist_ok=True)
 
-    run([sys.executable, "-m", "pip", "install", "--upgrade", "--no-cache-dir", "yt-dlp"], env=env)
+    run([sys.executable, "-m", "pip", "install", "--upgrade", "--no-cache-dir", "yt-dlp[default]"], env=env)   # [default] kèm yt-dlp-ejs
     need = [p for m, p in (("PIL", "pillow"), ("PyInstaller", "pyinstaller")) if importlib.util.find_spec(m) is None]
     if need:
         run([sys.executable, "-m", "pip", "install", "--no-cache-dir", *need], env=env)

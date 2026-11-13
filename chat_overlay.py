@@ -317,6 +317,10 @@ STRINGS = {
     "yu_bad": ("File tải về bị hỏng hoặc không khớp mã kiểm tra.", "The downloaded file is damaged or does not match its checksum."),
     "vd_fail": ("Tải video thất bại: {e}\n(Nếu YouTube vừa thay đổi, thử cập nhật: {upd})",
                 "Video download failed: {e}\n(If YouTube changed something, try updating: {upd})"),
+    "vd_nojs": ("\n\n⚠ Máy chưa có Node.js hoặc Deno nên yt-dlp không giải được mã của YouTube (thường gây lỗi "
+                "'giới hạn tuổi' / thiếu định dạng). Cài Node.js từ nodejs.org (bản LTS) rồi mở lại app.",
+                "\n\n⚠ Node.js or Deno is not installed, so yt-dlp can't solve YouTube's challenge (often shows as "
+                "'age-restricted' / missing formats). Install Node.js LTS from nodejs.org, then reopen the app."),
 }
 
 
@@ -2296,6 +2300,17 @@ def _final_path(src):
     return os.path.splitext(src)[0] + "_final.mp4"
 
 
+def _js_runtimes():
+    """yt-dlp cần một bộ chạy JavaScript (Deno/Node/Bun) để giải "n challenge" của YouTube, thiếu thì mất hết định dạng.
+    yt-dlp needs a JS runtime (Deno/Node/Bun) to solve YouTube's "n challenge"; without one formats go missing."""
+    found = {}
+    for name in ("deno", "node", "bun"):
+        p = find_tool(name)
+        if p:
+            found[name] = {"path": p}
+    return found
+
+
 def _video_cookie_attempts(cookies_file):
     att = [("file", cookies_file)] if cookies_file else []
     return att + [("chrome", ("chrome",)), ("none", None)]
@@ -2410,6 +2425,10 @@ def download_video(url, out_dir, max_h=0, delete_src=False, log=print, progress=
             "cachedir": ycache, "ffmpeg_location": os.path.dirname(ffmpeg) if ffmpeg else None,
             "retries": 10, "fragment_retries": 10, "extractor_retries": 5, "socket_timeout": 30,
             "retry_sleep_functions": {k: (lambda n: min(2 ** n, 30)) for k in ("http", "fragment", "extractor")}}
+    jsr = _js_runtimes()
+    if jsr:                  # tải bộ giải (ejs) từ GitHub nếu thiếu, lưu trong cachedir / fetch the solver if missing
+        base["js_runtimes"] = jsr
+        base["remote_components"] = ["ejs:github"]
     if list_only:            # live vừa kết thúc/chưa bắt đầu: không có định dạng vẫn đọc được thông tin, không báo lỗi
         base["ignore_no_formats_error"] = True   # / just-ended or upcoming live: read the info even with no formats
     attempts = _video_cookie_attempts(cookies_file)
@@ -2445,7 +2464,7 @@ def download_video(url, out_dir, max_h=0, delete_src=False, log=print, progress=
                 continue
             if _is_network_error(msg):
                 raise RuntimeError(T("vd_net", e=_short_err(msg)[:160]))
-            raise RuntimeError(T("vd_fail", e=msg, upd=T("upd_app")))
+            raise RuntimeError(T("vd_fail", e=msg, upd=T("upd_app")) + ("" if jsr else T("vd_nojs")))
     check_cancel()
     if info.get("_type") in ("playlist", "multi_video"):
         raise RuntimeError(T("dl_playlist"))
