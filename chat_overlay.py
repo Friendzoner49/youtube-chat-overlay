@@ -150,6 +150,16 @@ STRINGS = {
                        "   ⚠ Could not read cookies from Chrome ({e}) – Chrome may be running and locking the "
                        "cookie file. Close Chrome completely (including background processes) and retry if the "
                        "video requires login. Retrying without cookies…"),
+    "dl_cookie_dpapi": ("   ⚠ Chrome bản mới mã hoá cookies nên app không đọc thẳng được (đóng Chrome cũng không "
+                        "giúp). Đang thử tải tiếp không dùng cookies… Nếu video cần đăng nhập (giới hạn tuổi, "
+                        "hội viên), hãy bấm 'Lấy cookies' (qua tiện ích mở rộng) hoặc đặt file cookies.txt.",
+                        "   ⚠ Newer Chrome encrypts its cookies so the app can't read them directly (closing "
+                        "Chrome won't help). Retrying without cookies… If the video needs login (age-restricted, "
+                        "members-only), use 'Get cookies' (via the browser extension) or provide a cookies.txt."),
+    "ck_dpapi": ("Chrome bản mới mã hoá cookies nên không đọc thẳng được (đóng Chrome cũng không giúp). "
+                 "Hãy cài tiện ích mở rộng đi kèm app rồi bấm lại, hoặc tự xuất file cookies.txt.",
+                 "Newer Chrome encrypts its cookies so they can't be read directly (closing Chrome won't help). "
+                 "Install the bundled browser extension and try again, or export a cookies.txt yourself."),
     "ck_start": ("Đang đọc cookies từ {b}… (hãy đóng hẳn trình duyệt nếu bị lỗi)",
                  "Reading cookies from {b}… (close the browser completely if this fails)"),
     "ck_none": ("Không tìm thấy cookie nào của youtube.com/google.com trong {b}. Hãy đăng nhập YouTube trong "
@@ -317,6 +327,12 @@ STRINGS = {
     "yu_bad": ("File tải về bị hỏng hoặc không khớp mã kiểm tra.", "The downloaded file is damaged or does not match its checksum."),
     "vd_fail": ("Tải video thất bại: {e}\n(Nếu YouTube vừa thay đổi, thử cập nhật: {upd})",
                 "Video download failed: {e}\n(If YouTube changed something, try updating: {upd})"),
+    "vd_login": ("Video này cần đăng nhập YouTube (giới hạn tuổi hoặc dành cho hội viên), mà app chưa có cookies "
+                 "dùng được (chưa lấy, hoặc đã hết hạn).\nCách sửa: sang tab 'Khung chat', bấm 'Lấy cookies' "
+                 "(cần cài tiện ích mở rộng đi kèm app), rồi tải lại.\nChi tiết: {e}",
+                 "This video needs a YouTube login (age-restricted or members-only), and the app has no usable "
+                 "cookies (none saved, or they expired).\nFix: open the 'Chat overlay' tab, press 'Get cookies' "
+                 "(needs the bundled browser extension), then try again.\nDetails: {e}"),
     "vd_nojs": ("\n\n⚠ Máy chưa có Node.js hoặc Deno nên yt-dlp không giải được mã của YouTube (thường gây lỗi "
                 "'giới hạn tuổi' / thiếu định dạng). Cài Node.js từ nodejs.org (bản LTS) rồi mở lại app.",
                 "\n\n⚠ Node.js or Deno is not installed, so yt-dlp can't solve YouTube's challenge (often shows as "
@@ -1580,6 +1596,7 @@ def _find_chat_file(folder, vid, since=0.0):
 class _YdlLogger:
     def __init__(self):
         self.errors = []
+        self.warnings = []
 
     def debug(self, msg):
         pass
@@ -1588,7 +1605,7 @@ class _YdlLogger:
         pass
 
     def warning(self, msg):
-        pass
+        self.warnings.append(_strip_ansi(msg))
 
     def error(self, msg):
         self.errors.append(_strip_ansi(msg))
@@ -1846,26 +1863,29 @@ def try_extension_export(timeout=8):
         return None
 
 
-def _find_cookies_file(out_dir, work_dir):
-    """Tìm file cookies.txt (xuất thủ công từ trình duyệt) ở thư mục tải, thư mục làm việc hoặc cạnh app.
-    Looks for a manually exported cookies.txt in the download folder, work folder, or next to the app."""
-    for d in (out_dir, work_dir, SCRIPT_DIR):
+def _find_cookies_file(out_dir, work_dir, extra_dirs=()):
+    """Tìm file cookies.txt ở thư mục tải, thư mục làm việc, các thư mục khác của app (extra_dirs: nơi nút
+    "Lấy cookies" có thể đã lưu) hoặc cạnh app. Có nhiều file thì lấy file mới nhất.
+    Looks for cookies.txt in the download folder, work folder, the app's other folders (extra_dirs: where
+    "Get cookies" may have saved it), or next to the app. The newest file wins."""
+    found = []
+    for d in (out_dir, work_dir, *extra_dirs, SCRIPT_DIR):
         if not d:
             continue
-        p = os.path.join(d, "cookies.txt")
-        if os.path.isfile(p):
-            return p
-    return None
+        p = os.path.abspath(os.path.join(os.path.expanduser(d), "cookies.txt"))
+        if p not in found and os.path.isfile(p):
+            found.append(p)
+    return max(found, key=os.path.getmtime) if found else None
 
 
-def download_chat(url, out_dir, log=print, progress=None, cancel=None, work_dir=""):
+def download_chat(url, out_dir, log=print, progress=None, cancel=None, work_dir="", cookie_dirs=()):
     """Tải live chat replay của 1 video YouTube (giống: yt-dlp --write-subs --sub-langs live_chat --skip-download)."""
     ycache = os.path.join(prepare_work_dir(work_dir), "yt-dlp-cache")
     os.makedirs(out_dir, exist_ok=True)
     log(T("dl_start", url=url))
     log(T("dl_folder", p=os.path.abspath(out_dir)))
     tmpl = os.path.join(out_dir, "%(title).90s [%(id)s].%(ext)s")
-    cookies_file = _find_cookies_file(out_dir, work_dir)
+    cookies_file = _find_cookies_file(out_dir, work_dir, cookie_dirs)
     if cookies_file:
         log(T("dl_cookiefile", p=cookies_file))
     try:
@@ -1900,6 +1920,23 @@ def _short_err(e):
 
 def _is_network_error(e):
     return bool(_NET_ERR.search(str(e) or repr(e)))
+
+
+def _is_cookie_error(msg):
+    """Lỗi đọc cookies (kể cả lỗi giải mã DPAPI của Chrome, câu báo không có chữ 'cookie').
+    Cookie-loading failure, incl. Chrome's DPAPI decrypt error whose message lacks the word 'cookie'."""
+    m = str(msg).lower()
+    return any(k in m for k in ("cookie", "dpapi", "decrypt", "could not copy chrome"))
+
+
+# Câu yt-dlp báo khi video cần đăng nhập (giới hạn tuổi, hội viên). / yt-dlp's wording for login-only videos.
+_LOGIN_RE = re.compile(r"sign in to confirm|members-only|join this channel", re.I)
+
+
+def _cookie_fail_msg(msg):
+    if "dpapi" in str(msg).lower():
+        return T("dl_cookie_dpapi")
+    return T("dl_cookie_fail", e=_short_err(msg)[:200])
 
 
 def _patch_live_chat_retries(yt_dlp):
@@ -1988,8 +2025,8 @@ def _download_chat_module(yt_dlp, url, tmpl, out_dir, log, progress, cancel, yca
                 if cancel is not None and cancel.is_set():
                     raise Cancelled()
                 msg = _strip_ansi(e) or (ylog.errors[-1] if ylog.errors else repr(e))
-                if kind != "none" and not last_try and "cookie" in msg.lower():
-                    log(T("dl_cookie_fail", e=_short_err(msg)[:200]))
+                if kind != "none" and not last_try and _is_cookie_error(msg):
+                    log(_cookie_fail_msg(msg))
                     continue
                 if _is_network_error(msg):
                     raise RuntimeError(T("dl_net", e=_short_err(msg)[:160]))
@@ -2049,9 +2086,9 @@ def _download_chat_cli(exe, url, tmpl, out_dir, log, progress, cancel, ycache, c
     path, rc, errors = None, 0, []
     for i, kw in enumerate(attempts):
         path, rc, errors = _run_ytdlp_cli(exe, url, tmpl, out_dir, progress, cancel, ycache, **kw)
-        if path or i == len(attempts) - 1 or rc == 0 or not errors or "cookie" not in errors[-1].lower():
+        if path or i == len(attempts) - 1 or rc == 0 or not errors or not _is_cookie_error(errors[-1]):
             break
-        log(T("dl_cookie_fail", e=_short_err(errors[-1])[:200]))
+        log(_cookie_fail_msg(errors[-1]))
     if not path:
         if rc != 0 and errors:
             net = _is_network_error(errors[-1])
@@ -2376,7 +2413,7 @@ def _format_verdict(info, table, max_h, want, log):
 
 
 def download_video(url, out_dir, max_h=0, delete_src=False, log=print, progress=None, cancel=None, work_dir="",
-                   kind="both", list_only=False):
+                   kind="both", list_only=False, cookie_dirs=()):
     """Tải video (AV1 hoặc VP9→H.264). Trả về đường dẫn file cuối.
     list_only=True: chỉ in bảng định dạng (yt-dlp --list-formats) + kết luận, không tải; trả về câu kết luận.
     Download a video; returns the final file path. list_only=True: only list formats + verdict, returns the verdict."""
@@ -2392,7 +2429,7 @@ def download_video(url, out_dir, max_h=0, delete_src=False, log=print, progress=
     if not list_only:
         os.makedirs(out_dir, exist_ok=True)
         log(T("dl_folder", p=os.path.abspath(out_dir)))
-    cookies_file = _find_cookies_file(out_dir, work_dir)
+    cookies_file = _find_cookies_file(out_dir, work_dir, cookie_dirs)
     if cookies_file:
         log(T("dl_cookiefile", p=cookies_file))
     ylog = _YdlLogger()
@@ -2444,6 +2481,7 @@ def download_video(url, out_dir, max_h=0, delete_src=False, log=print, progress=
         elif kind == "chrome":
             opts["cookiesfrombrowser"] = cookies
         ylog.errors.clear()
+        ylog.warnings.clear()
         try:
             with yt_dlp.YoutubeDL(opts) as ydl:
                 info = ydl.extract_info(url, download=False) or {}
@@ -2459,13 +2497,19 @@ def download_video(url, out_dir, max_h=0, delete_src=False, log=print, progress=
         except Exception as e:
             check_cancel()
             msg = _strip_ansi(e) or (ylog.errors[-1] if ylog.errors else repr(e))
-            if kind != "none" and i < len(attempts) - 1 and "cookie" in msg.lower():
-                log(T("dl_cookie_fail", e=_short_err(msg)[:200]))
+            if kind != "none" and i < len(attempts) - 1 and _is_cookie_error(msg):
+                log(_cookie_fail_msg(msg))
                 continue
             if _is_network_error(msg):
                 raise RuntimeError(T("vd_net", e=_short_err(msg)[:160]))
+            if _LOGIN_RE.search(msg):
+                raise RuntimeError(T("vd_login", e=_short_err(msg)[:160]) + ("" if jsr else T("vd_nojs")))
             raise RuntimeError(T("vd_fail", e=msg, upd=T("upd_app")) + ("" if jsr else T("vd_nojs")))
     check_cancel()
+    if list_only and not info.get("formats"):    # ignore_no_formats_error biến lỗi "cần đăng nhập" thành cảnh báo
+        need = [w for w in ylog.warnings if _LOGIN_RE.search(w)]     # / turns "login needed" into a warning
+        if need:
+            raise RuntimeError(T("vd_login", e=_short_err(need[-1])[:160]) + ("" if jsr else T("vd_nojs")))
     if info.get("_type") in ("playlist", "multi_video"):
         raise RuntimeError(T("dl_playlist"))
     if info.get("is_live") and not list_only:
@@ -3599,6 +3643,7 @@ def launch_gui():
             out_dir = os.path.dirname(os.path.abspath(vid))
         else:
             out_dir = default_download_dir()
+        ck_dirs = cookie_dirs()
         begin()
         W["pb"].config(mode="indeterminate")
         W["pb"].start(15)
@@ -3607,7 +3652,7 @@ def launch_gui():
             try:
                 p = download_chat(url, out_dir, log=lambda s: q.put(("log", s)),
                                   progress=lambda ph, f: q.put(("prog", ph, f)), cancel=cancel_ev,
-                                  work_dir=paths["work"].get().strip())
+                                  work_dir=paths["work"].get().strip(), cookie_dirs=ck_dirs)
                 q.put(("chat_ready", p))
             except Cancelled:
                 q.put(("cancel",))
@@ -3616,12 +3661,18 @@ def launch_gui():
                 q.put(("err", str(e)))
         threading.Thread(target=work, daemon=True).start()
 
+    def cookie_dirs():
+        # Mọi thư mục mà nút "Lấy cookies" có thể đã lưu cookies.txt (xem start_export_cookies), để tab Tải chat
+        # và tab Tải video dùng chung 1 file. / Every folder "Get cookies" may have saved cookies.txt into.
+        return [paths["dldir"].get().strip(), paths["viddir"].get().strip(), default_download_dir()]
+
     def start_video(check=False):
         url = vurl.get().strip()
         if not re.match(r"https?://", url):
             messagebox.showerror(APP_TITLE, T("g_err_url"))
             return
         out_dir = os.path.expanduser(paths["viddir"].get().strip()) or default_download_dir()
+        ck_dirs = cookie_dirs()
         max_h, del_src, work_dir = int(codes["maxh"]), v_delsrc.get(), paths["work"].get().strip()
         kind = codes["vkind"]
         begin()
@@ -3634,7 +3685,7 @@ def launch_gui():
             try:
                 p = download_video(url, out_dir, max_h, del_src, log=lambda s: q.put(("log", s)),
                                    progress=lambda ph, f: q.put(("prog", ph, f)), cancel=cancel_ev, work_dir=work_dir,
-                                   kind=kind, list_only=check)
+                                   kind=kind, list_only=check, cookie_dirs=ck_dirs)
                 q.put(("formats_ready" if check else "video_ready", p))
             except Cancelled:
                 q.put(("cancel",))
@@ -3692,7 +3743,7 @@ def launch_gui():
                 q.put(("cookies_ready", p))
             except Exception as e:
                 q.put(("log", traceback.format_exc()))
-                q.put(("err", T("ck_fail", e=str(e))))
+                q.put(("err", T("ck_dpapi") if "dpapi" in str(e).lower() else T("ck_fail", e=str(e))))
         threading.Thread(target=work, daemon=True).start()
 
     def finish():
@@ -3899,7 +3950,8 @@ def main(argv=None):
         if re.match(r"https?://", o.chat):
             folder = (a.download_dir or st.get("download_dir")
                       or (os.path.dirname(os.path.abspath(o.video)) if o.video else os.getcwd()))
-            o.chat = download_chat(o.chat, folder, log=log, progress=progress, work_dir=o.work_dir)
+            o.chat = download_chat(o.chat, folder, log=log, progress=progress, work_dir=o.work_dir,
+                                   cookie_dirs=(st.get("download_dir", ""), st.get("video_dir", "")))
         run(o, log=log, progress=progress)
     except Cancelled:
         print(T("cancelled"))
