@@ -239,11 +239,11 @@ STRINGS = {
     "g_tab_chat": ("Khung chat", "Chat overlay"),
     "g_tab_video": ("Tải video", "Download video"),
     "gv_hint": ("Dán link YouTube, bấm Kiểm tra định dạng để xem video đã tải được chưa (livestream vừa xong có thể chưa có), "
-                "rồi bấm Tải video. Có bản Premium thì lấy bản đó rồi đổi sang H.264 (_final.mp4) như VP9; không thì AV1 nét nhất; không có AV1 thì "
-                "VP9 nét nhất rồi đổi sang H.264 (_final.mp4) để dùng trong DaVinci/Premiere. Chỉ lấy tiếng thì được file m4a gốc, không đổi mã.",
+                "rồi bấm Tải video. Có bản Premium thì lấy bản đó rồi đổi sang H.264 (_final.mp4) như VP9; không thì lấy độ phân giải cao nhất, bằng nhau thì ưu tiên "
+                "AV1, rồi VP9 (đổi sang H.264 _final.mp4 cho DaVinci/Premiere), rồi H.264. Chỉ lấy tiếng thì được file m4a gốc, không đổi mã.",
                 "Paste a YouTube link, press Check formats to see whether it can be downloaded yet (a just-ended stream may not be), "
-                "then press Download video. A Premium format is taken and converted to H.264 (_final.mp4) like VP9; otherwise the sharpest AV1; without AV1, "
-                "the sharpest VP9, converted to H.264 (_final.mp4) for DaVinci/Premiere. Audio only gives the original m4a, not re-encoded."),
+                "then press Download video. A Premium format is taken and converted to H.264 (_final.mp4) like VP9; otherwise the highest resolution, ties going to "
+                "AV1, then VP9 (converted to H.264 _final.mp4 for DaVinci/Premiere), then H.264. Audio only gives the original m4a, not re-encoded."),
     "gv_go": ("▶ Tải video", "▶ Download video"),
     "gv_dir": ("Thư mục lưu video (trống = Downloads)", "Video folder (blank = Downloads)"),
     "gv_maxh": ("Độ phân giải tối đa", "Max resolution"),
@@ -279,13 +279,13 @@ STRINGS = {
                     "Try 'Get cookies' and download again."),
     "vd_live": ("Video này đang phát trực tiếp – hãy đợi buổi live kết thúc rồi tải.",
                 "This video is live right now – wait until the stream ends, then download."),
-    "vd_av1_lower": ("   Có AV1 nhưng thấp hơn VP9 ({a} so với {v}) → chọn VP9 để giữ độ nét.",
-                     "   AV1 exists but is lower quality than VP9 ({a} vs {v}) → using VP9 to keep the sharpness."),
+    "vd_codec_lower": ("   Có {c} nhưng thấp hơn ({a} so với {v}) → chọn {m} để giữ độ nét.",
+                       "   {c} exists but is lower quality ({a} vs {v}) → using {m} to keep the sharpness."),
     "vd_pick_av1": ("▶ Chọn AV1: {v} + tiếng {a} → ghép lại, giữ nguyên.", "▶ Picked AV1: {v} + audio {a} → merged, kept as is."),
     "vd_pick_vp9": ("▶ Không có AV1 phù hợp, chọn VP9: {v} + tiếng {a} → sẽ đổi sang H.264.",
                     "▶ No suitable AV1, picked VP9: {v} + audio {a} → will be converted to H.264."),
-    "vd_pick_h264": ("▶ Không có AV1/VP9, chọn H.264: {v} + tiếng {a} → ghép lại, không đổi mã.",
-                     "▶ No AV1/VP9, picked H.264: {v} + audio {a} → merged, not re-encoded."),
+    "vd_pick_h264": ("▶ Chọn H.264 (nét nhất hiện có): {v} + tiếng {a} → ghép lại, không đổi mã.",
+                     "▶ Picked H.264 (the sharpest available): {v} + audio {a} → merged, not re-encoded."),
     "vd_downloaded": ("Đã tải xong: {p} ({mb:.0f} MB)", "Downloaded: {p} ({mb:.0f} MB)"),
     "vd_nofile": ("Tải xong nhưng không thấy file video.", "The download finished but the video file was not found."),
     "vd_conv": ("Đổi sang H.264 bằng {e} → {p}", "Converting to H.264 with {e} → {p}"),
@@ -2312,14 +2312,17 @@ def choose_video_formats(info, max_h=0, force="", kind="both", premium=True):
     note = ""
     if force in best:
         mode = force
-    elif "av1" in best and ("vp9" not in best or _fq(best["av1"])[0] >= _fq(best["vp9"])[0]):
-        mode = "av1"
-    elif "vp9" in best:
-        mode = "vp9"
-        if "av1" in best:
-            note = T("vd_av1_lower", a=_fdesc(best["av1"]), v=_fdesc(best["vp9"]))
     elif best:
-        mode = "h264"
+        # Độ phân giải quyết định trước, loại mã chỉ phân xử khi bằng nhau (AV1 > VP9 > H.264): VP9 chỉ có 360p
+        # mà H.264 có 1080p thì lấy H.264. / Resolution first; codec order only breaks ties.
+        top = max(_fq(f)[0] for f in best.values())
+        mode = next(c for c in ("av1", "vp9", "h264") if c in best and _fq(best[c])[0] == top)
+        lower = [c for c in ("av1", "vp9") if c in best and c != mode and ("av1", "vp9", "h264").index(c)
+                 < ("av1", "vp9", "h264").index(mode)]
+        if lower:
+            c = lower[0]
+            note = T("vd_codec_lower", c=c.upper(), a=_fdesc(best[c]), m=mode.upper().replace("H264", "H.264"),
+                     v=_fdesc(best[mode]))
     if prem and force not in best:
         bp = max(prem, key=_fq)
         if not best or _fq(bp)[0] >= max(_fq(f)[0] for f in best.values()):
@@ -2331,6 +2334,16 @@ def choose_video_formats(info, max_h=0, force="", kind="both", premium=True):
     else:
         audio, container = max(auds, key=aq), "mkv"
     return {"mode": mode, "video": best[mode], "audio": audio, "container": container, "note": note}
+
+
+def _fmt_speed(bps):
+    """Byte/giây -> "12.3 MB/s". / Bytes per second -> "12.3 MB/s"."""
+    if not bps or bps <= 0:
+        return ""
+    for unit, k in (("GB/s", 1e9), ("MB/s", 1e6), ("KB/s", 1e3)):
+        if bps >= k:
+            return f"{bps / k:.1f} {unit}"
+    return f"{bps:.0f} B/s"
 
 
 def _final_path(src):
@@ -2452,6 +2465,10 @@ def download_video(url, out_dir, max_h=0, delete_src=False, log=print, progress=
         total = sum(state["size"].values())
         if total > 0:
             progress("vdl", min(1.0, sum(state["done"].values()) / total))
+        now = time.time()
+        if d.get("speed") is not None and now - state.get("spd_t", 0) >= 0.5:   # tốc độ tải / download speed
+            state["spd_t"] = now
+            progress("vspeed", float(d.get("speed") or 0))
 
     def pp_hook(d):
         check_cancel()
@@ -3344,6 +3361,7 @@ def launch_gui():
     v_prev = SV(st.get("preview_at", "5:00"))
     v_browser = SV(st.get("cookie_browser", "chrome"))
     status = SV("")
+    speed = SV("")                               # tốc độ tải, góc phải trên thanh tiến độ / download speed
 
     def save():
         d = {"lang": LANG, "work_dir": paths["work"].get().strip(), "download_dir": paths["dldir"].get().strip(),
@@ -3545,7 +3563,10 @@ def launch_gui():
 
         if not status.get() or not busy[0]:
             status.set(T("g_ready"))
-        ttk.Label(bot, textvariable=status).pack(fill="x", **P)
+        srow = ttk.Frame(bot)                    # dòng trạng thái: chữ bên trái, tốc độ tải bên phải
+        srow.pack(fill="x")                      # / status row: text on the left, download speed on the right
+        ttk.Label(srow, textvariable=speed).pack(side="right", **P)
+        ttk.Label(srow, textvariable=status).pack(side="left", fill="x", expand=True, **P)
         pb = ttk.Progressbar(bot, maximum=1000)
         pb.pack(fill="x", **P)
         W["pb"] = pb
@@ -3748,6 +3769,7 @@ def launch_gui():
 
     def finish():
         set_busy(False)
+        speed.set("")
         pb = W["pb"]
         pb.stop()
         pb.config(mode="determinate")
@@ -3761,6 +3783,11 @@ def launch_gui():
                     add_log(it[1])
                 elif kind == "prog":
                     ph, f = it[1], it[2]
+                    if ph == "vspeed":
+                        speed.set(_fmt_speed(f))
+                        continue
+                    if ph != "vdl":              # hết giai đoạn tải thì xoá tốc độ / clear the speed outside downloading
+                        speed.set("")
                     if ph == "chat":
                         status.set(T("ph_chat", mb=f / 1e6))
                     elif f < 0:                  # không biết % (đọc danh sách, ghép) / unknown % (listing, merging)
@@ -3932,6 +3959,8 @@ def main(argv=None):
 
     def progress(ph, f):
         now = time.time()
+        if ph == "vspeed":                       # dòng lệnh không hiện tốc độ / the CLI doesn't show the speed
+            return
         if ph == "chat":
             if now - last[0] > 0.5:
                 last[0] = now

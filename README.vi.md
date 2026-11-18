@@ -51,9 +51,10 @@ Muốn chạy từ mã nguồn? Xem [Chạy từ mã nguồn](#chạy-từ-mã-n
 - Nút **Tải video**: chọn luồng tốt nhất, tải và ghép. Độ phân giải tối đa do bạn chọn.
 - **Có bản Premium →** lấy bản đó rồi đổi sang H.264 (`_final.mp4`) như VP9, vì DaVinci thường không mở được file Premium gốc. Không tải được thì tự lấy bản thường.
 - **Có AV1 →** tải AV1 nét nhất + tiếng AAC, ghép thành `.mp4`, giữ nguyên.
+- **Độ phân giải xét trước →** VP9 hoặc H.264 nét hơn AV1 thì lấy bản đó (vd VP9 chỉ 360p mà H.264 có 1080p → lấy H.264 1080p, giữ nguyên).
 - **Không có AV1 →** tải VP9 nét nhất rồi đổi bằng FFmpeg (`h264_nvenc`, VBR 15 Mbit/s, AAC 320k) thành `_final.mp4`, DaVinci Resolve và Premiere đọc chắc chắn.
 - **Chỉ hình / chỉ tiếng.** Chỉ tiếng lưu đúng **m4a (AAC)** gốc, không đổi mã.
-- Có thanh tiến độ, nút Huỷ, và tải tiếp được khi bị đứt mạng.
+- Có thanh tiến độ kèm tốc độ tải, nút Huỷ, và tải tiếp được khi bị đứt mạng.
 
 **Ngoài ra:** tải chat thẳng từ link, giao diện song ngữ Việt / Anh, đầy đủ dòng lệnh, và **cập nhật yt-dlp** ngay trong app.
 
@@ -76,7 +77,8 @@ Dán link, chọn thư mục và (nếu muốn) độ phân giải tối đa, r�
 
 1. App đọc danh sách định dạng (cùng dữ liệu với `yt-dlp --list-formats`, hiện trong ô log).
    - Nếu có bản **Premium** nét bằng hoặc hơn bản thường, app lấy bản Premium rồi đổi thành `_final.mp4` đúng như VP9 (DaVinci thường không mở được file Premium gốc). Tải bản Premium bị từ chối thì app tự chuyển sang các bước dưới.
-2. Nếu có **AV1**, app tải AV1 nét nhất (trong giới hạn bạn chọn) cùng tiếng AAC rồi ghép thành `.mp4`. Nếu YouTube có VP9 độ phân giải *cao hơn* AV1 thì dùng VP9 để không mất độ nét.
+2. Nếu có **AV1**, app tải AV1 nét nhất (trong giới hạn bạn chọn) cùng tiếng AAC rồi ghép thành `.mp4`. Độ phân giải luôn xét trước: VP9 hoặc H.264 *cao hơn* AV1 thì dùng bản đó để không mất độ nét.
+   Nếu H.264 cao hơn mọi bản AV1/VP9 (có video VP9 chỉ 360p mà H.264 có 1080p), app tải H.264 và ghép giữ nguyên, không đổi mã.
 3. Nếu không có AV1, app tải **VP9** nét nhất rồi đổi thành `<tên>_final.mp4` (`h264_nvenc`, preset p7, VBR 15 Mbit/s, AAC 320k). Máy không có card NVIDIA thì tự đổi bằng CPU (`libx264`, chậm hơn nhiều). Tick *Xoá file VP9 gốc* nếu chỉ cần file `_final.mp4`.
 4. Nếu đang tải bị đứt (VPN, mạng), bấm nút lần nữa: phần đã tải được giữ lại và tải tiếp.
 

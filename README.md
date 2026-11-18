@@ -51,9 +51,10 @@ Prefer running from source? See [Run from source](#run-from-source).
 - **Download video** button: picks the best stream, downloads and merges it. Max resolution is your choice.
 - **Premium format available →** taken and converted to H.264 (`_final.mp4`) like VP9, because DaVinci often can't open the Premium file. If it fails, a normal format is used.
 - **AV1 available →** sharpest AV1 + AAC audio, merged into an `.mp4`, untouched.
+- **Resolution first →** if VP9 or H.264 is sharper than AV1, that one is used (e.g. VP9 only 360p but H.264 1080p → H.264 1080p, kept as is).
 - **No AV1 →** sharpest VP9, converted with FFmpeg (`h264_nvenc`, VBR 15 Mbit/s, AAC 320k) to `_final.mp4`, which DaVinci Resolve and Premiere open reliably.
 - **Video only / audio only.** Audio only saves the original **m4a (AAC)**, with no re-encoding.
-- Progress bar, Cancel, and resume after a dropped connection.
+- Progress bar with download speed, Cancel, and resume after a dropped connection.
 
 **Everything else:** download the chat straight from a link, bilingual GUI (English / Tiếng Việt), a full command line, and in-app **yt-dlp updates**.
 
@@ -76,7 +77,8 @@ Paste a link, choose a folder and (optionally) a maximum resolution, then press 
 
 1. The app reads the format list (the same data as `yt-dlp --list-formats`, shown in the log).
    - If a **Premium** format is at least as sharp as the best normal one, it is taken and converted to `_final.mp4` exactly like VP9 (DaVinci often can't open the Premium file as is). If the Premium download is refused, the app falls back to the steps below.
-2. If an **AV1** stream exists, it downloads the sharpest AV1 (within your cap) plus AAC audio and merges them into an `.mp4`. If YouTube offers a *higher* resolution in VP9 than in AV1, VP9 is used so you don't lose sharpness.
+2. If an **AV1** stream exists, it downloads the sharpest AV1 (within your cap) plus AAC audio and merges them into an `.mp4`. Resolution always comes first: if VP9 or H.264 is *higher* than AV1, that one is used so you don't lose sharpness.
+   If the H.264 stream is higher than every AV1/VP9 stream (some videos only have VP9 360p but H.264 1080p), the H.264 is downloaded and merged as is, without conversion.
 3. If there is no AV1, it downloads the sharpest **VP9** and converts it to `<name>_final.mp4` (`h264_nvenc`, preset p7, VBR 15 Mbit/s, AAC 320k). Without an NVIDIA GPU it falls back to the CPU (`libx264`, much slower). Tick *Delete the VP9 source* if you only want the `_final.mp4`.
 4. If a download is cut off (VPN, network), press the button again: the part already downloaded is kept and resumed.
 
